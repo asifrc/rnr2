@@ -17,7 +17,13 @@ configurations {
 }
 
 sourceSets {
-    selenium
+   selenium
+   main {
+       output.classesDir =  'build/classes/production'
+   }
+   test{
+       output.resourcesDir =  'build/classes/test'
+   }
 }
 
 dependencies {
