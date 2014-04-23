@@ -30,22 +30,10 @@ public class SAMLServiceTest {
         SAMLService = new SAMLService();
     }
 
-    @Test
-    public void testCreateSAMLRequest() throws Exception {
-        String samlRequest = SAMLService.createSAMLRequest();
-        assertTrue(samlRequest.startsWith(oktaRedirectURL));
-        verify(configurationParserMock).parse();
-    }
 
     @Test
     public void testConfigPath() {
         ConfigurationParser parser = new ConfigurationParser();
         parser.parse();
-    }
-
-    @Test
-    public void createSAMLRequestShouldGetRequestInfoFromConfiguration() {
-        String samlRequest = SAMLService.createSAMLRequest();
-        assertTrue(samlRequest.endsWith(testRequest));
     }
 }

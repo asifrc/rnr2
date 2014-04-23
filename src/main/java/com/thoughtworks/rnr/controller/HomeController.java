@@ -42,7 +42,7 @@ public class HomeController {
 
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String doesNothing() {
-        return "";
+        return "home";
     }
 
     @RequestMapping(value="/home", method = RequestMethod.GET)

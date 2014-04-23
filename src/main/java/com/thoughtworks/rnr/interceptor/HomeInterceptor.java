@@ -20,7 +20,8 @@ public class HomeInterceptor extends HandlerInterceptorAdapter{
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        httpServletResponse.sendRedirect(samlService.createSAMLRequest());
+        //TODO: Michael & George  Redirect toggled off because we have no Okta Preview login for testing
+//      httpServletResponse.sendRedirect(samlService.createSAMLRequest());
         return true;
     }
 }
