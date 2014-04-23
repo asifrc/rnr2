@@ -20,13 +20,7 @@ public class HomeInterceptor extends HandlerInterceptorAdapter{
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        HttpSession session = httpServletRequest.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            String samlRequest = samlService.createSAMLRequest();
-//            httpServletResponse.sendRedirect(samlRequest);
-//            return false;
-        }
-
+        httpServletResponse.sendRedirect(samlService.createSAMLRequest());
         return true;
     }
 }

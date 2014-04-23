@@ -27,7 +27,7 @@ public class SAMLServiceTest {
         when(configurationParserMock.parse()).thenReturn(configuration);
         when(configuration.getRequest()).thenReturn(testRequest);
 
-        SAMLService = new SAMLService(configurationParserMock);
+        SAMLService = new SAMLService();
     }
 
     @Test
