@@ -40,15 +40,23 @@ public class HomeController {
         this.SAMLService = SAMLService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public String doesNothing() {
+        return "";
+    }
+
+    @RequestMapping(value="/home", method = RequestMethod.GET)
     public String displayHome() {
         return "home";
     }
 
-//    @RequestMapping(value="redirect",method = RequestMethod.GET)
-//    public String redirectCheck() {
-//        return "redirect";
-//    }
+    @RequestMapping(value = "/auth/saml/callback", method = RequestMethod.POST)
+    public String sendToHome() {
+//        do other auth stuff
+//        if it succeeds
+        return "redirect:/home";
+//        if not, redirect somewhere else.
+    }
 
     @RequestMapping(value = "/", params={"startDate", "rolloverdays", "accrualRate", "salesForceText", "endDate"}, method = RequestMethod.POST)
     public ModelAndView postDate(@RequestParam("startDate")String startDate,
