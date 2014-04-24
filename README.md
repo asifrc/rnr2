@@ -92,3 +92,5 @@ If you seem to be missing an inordinate number of libraries and the artifact can
     Check your version of Java.
     Less than 1.7 will cause really funky errors
     
+
+Cheers!
