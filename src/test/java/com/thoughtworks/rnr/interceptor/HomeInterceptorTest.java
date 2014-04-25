@@ -34,14 +34,11 @@ public class HomeInterceptorTest {
         initMocks(this);
         homeInterceptor = new HomeInterceptor(new SAMLService());
     }
-    @Ignore("George and Michael, ignored because we have no Okta preview login credentials for testing ")
+
     @Test
     public void shouldRedirectToOktaOnAGetRequest() throws Exception {
-
         homeInterceptor.preHandle(mockRequest, mockResponse, handler);
-
-        verify(mockResponse).sendRedirect("https://thoughtworks.oktapreview.com/app/template_saml_2_0/k21tpw64VPAMDOMKRXBS/sso/saml?SAMLRequest=");
-
+        verify(mockResponse).sendRedirect("https://thoughtworks.oktapreview.com/app/template_saml_2_0/k21tpw64VPAMDOMKRXBS/sso/saml");
     }
 
     @Ignore
@@ -71,7 +68,7 @@ public class HomeInterceptorTest {
 
     private void shouldRedirectToSAMLRequest() throws Exception {
         String mockSAMLRequest = "SAMLRequest";
-        when(mockSAMLService.createSAMLRequest()).thenReturn(mockSAMLRequest);
+        when(mockSAMLService.oktaRedirectURL()).thenReturn(mockSAMLRequest);
 
         boolean interceptorReturn = homeInterceptor.preHandle(mockRequest, mockResponse, handler);
 
