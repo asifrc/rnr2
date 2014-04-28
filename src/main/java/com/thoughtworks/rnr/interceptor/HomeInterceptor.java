@@ -7,7 +7,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 @Component
 public class HomeInterceptor extends HandlerInterceptorAdapter{
@@ -20,7 +19,7 @@ public class HomeInterceptor extends HandlerInterceptorAdapter{
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        httpServletResponse.sendRedirect(samlService.createSAMLRequest());
+        httpServletResponse.sendRedirect(samlService.oktaRedirectURL());
         return true;
     }
 }

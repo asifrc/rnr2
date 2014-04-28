@@ -1,5 +1,6 @@
 package com.thoughtworks.rnr.controller;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
@@ -40,15 +43,16 @@ public class HomeController {
         this.SAMLService = SAMLService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public String doesNothing() {
+        return "home";
+    }
+
+    @RequestMapping(value="/home", method = RequestMethod.GET)
     public String displayHome() {
         return "home";
     }
 
-//    @RequestMapping(value="redirect",method = RequestMethod.GET)
-//    public String redirectCheck() {
-//        return "redirect";
-//    }
 
     @RequestMapping(value = "/", params={"startDate", "rolloverdays", "accrualRate", "salesForceText", "endDate"}, method = RequestMethod.POST)
     public ModelAndView postDate(@RequestParam("startDate")String startDate,
