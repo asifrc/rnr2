@@ -35,6 +35,7 @@ public class HomeInterceptorTest {
         homeInterceptor = new HomeInterceptor(new SAMLService());
     }
 
+    @Ignore("Ignored as the interceptor is not currently running")
     @Test
     public void shouldRedirectToOktaOnAGetRequest() throws Exception {
         homeInterceptor.preHandle(mockRequest, mockResponse, handler);

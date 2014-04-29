@@ -1,7 +1,6 @@
 package com.thoughtworks.rnr.service;
 
-import com.thoughtworks.rnr.model.ConfigurationParser;
-import com.thoughtworks.rnr.saml.Configuration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
