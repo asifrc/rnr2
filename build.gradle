@@ -1,0 +1,76 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+group = 'com.springapp'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    providedCompile
+}
+
+sourceSets {
+    selenium
+}
+
+dependencies {
+    def seleniumVersion = "2.40.0"
+
+    providedCompile "javax.servlet:servlet-api:2.5"
+    compile group: 'org.springframework', name: 'spring-core', version:'4.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version:'4.0.1.RELEASE'
+    compile group: 'javax.servlet', name: 'servlet-api', version:'2.5'
+    compile group: 'javax.servlet', name: 'jstl', version:'1.2'
+    compile group: 'joda-time', name: 'joda-time', version:'2.3'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.0.1.RELEASE'
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version:'4.3.2'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.3.3'
+    compile group: 'org.json', name: 'json', version:'20080701'
+    compile group: 'org.eclipse.jetty.orbit', name: 'javax.servlet', version:'3.0.0.v201112011016'
+    testCompile group: 'org.springframework', name: 'spring-test', version:'4.0.1.RELEASE'
+    testCompile group: 'junit', name: 'junit', version:'4.8.2'
+    testCompile group: 'org.jbehave', name: 'jbehave-core', version:'3.8'
+    testCompile group: 'de.codecentric', name: 'jbehave-junit-runner', version:'1.0.1'
+    testCompile group: 'org.seleniumhq.selenium', name: 'selenium-java', version:'2.40.0'
+    testCompile "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+    seleniumCompile 'junit:junit:4.11'
+    seleniumCompile 'org.seleniumhq.selenium:selenium-java:2.30.0'
+}
+
+sourceSets.main.compileClasspath += configurations.providedCompile
+sourceSets.test.compileClasspath += configurations.providedCompile
+sourceSets.test.runtimeClasspath += configurations.providedCompile
+
+task jettyDaemon(type: org.gradle.api.plugins.jetty.JettyRun) {
+    daemon = true
+}
+
+[jettyRun, jettyRunWar,jettyStop]*.stopPort = 8081
+[jettyRun, jettyRunWar,jettyStop]*.stopKey = 'stopKey'
+
+test {
+    exclude '**/functional/*.*'
+}
+task testFunctional(type: Test, dependsOn:test) {
+    include '**/functional/*.*'
+    systemProperties = [
+            BROWSER: System.getProperty('BROWSER', 'firefox')
+    ]
+    doFirst {
+        println 'Starting the embedded jetty server'
+        jettyRun.daemon = true
+        jettyRun.execute()
+    }
+    doLast {
+        println 'Stopping the embedded jetty server'
+        jettyStop.execute()
+    }
+}

@@ -3,6 +3,7 @@ package functional;
 import com.thoughtworks.rnr.model.Constants;
 import org.jbehave.core.annotations.*;
 import org.joda.time.LocalDate;
+import org.junit.Ignore;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
