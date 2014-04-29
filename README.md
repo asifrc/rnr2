@@ -1,5 +1,8 @@
 README
 
+To deploy a war with the test profile (enabling the mock interceptor):
+mvn clean compile -P test war:war jetty:deploy-war. Running mvn test will not utilize the profile.
+
 Project note 1/21/2014:  InfoSec has told us that if we are to continue improving RnR and connect it to the SalesForce API,
 we will need to make the project 100% JavaScript due to Java's security vulnerabilities.  We also need to include them
 (infosec@thoughtworks.com) in any discussions about integration with the SalesForce API and changing the project

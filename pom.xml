@@ -12,7 +12,17 @@
         <jettyVersion>9.1.3.v20140225</jettyVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <env>dev</env>
+        <webXmlPath>src/main/webapp/WEB-INF/web.xml</webXmlPath>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>test</id>
+            <properties>
+                <webXmlPath>src/main/webapp/WEB-INF/testenv/web.xml</webXmlPath>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -146,6 +156,13 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webXml>${webXmlPath}</webXml>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>

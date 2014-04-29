@@ -42,6 +42,14 @@ public class HomeController {
         this.personalDaysCalculator = personalDaysCalculator;
         this.SAMLService = SAMLService;
     }
+    @RequestMapping(value="/test", method = RequestMethod.GET )
+    public ModelMap testEnv(){
+       ModelMap modelMap=  new ModelMap();
+        String env = System.getProperty("environment");
+        modelMap.put("environment", env);
+        return modelMap;
+     }
+
 
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String doesNothing() {
