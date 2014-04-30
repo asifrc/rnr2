@@ -11,6 +11,9 @@
     <mvc:resources mapping="/images/*" location="/images/" />
     <mvc:resources mapping="/scripts/**" location="/scripts/" />
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="${org.gradle.project.environment}.properties"></property>
+    </bean>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
@@ -23,7 +26,7 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/"/>
-        <bean class="com.thoughtworks.rnr.interceptor.HomeInterceptor"/>
+        <bean class="${interceptor}"/>
         </mvc:interceptor>
     </mvc:interceptors>
 

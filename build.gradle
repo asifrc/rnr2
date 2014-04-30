@@ -59,11 +59,10 @@ task jettyDaemon(type: org.gradle.api.plugins.jetty.JettyRun) {
 test {
     exclude '**/functional/*.*'
 }
+
 task testFunctional(type: Test, dependsOn:test) {
     include '**/functional/*.*'
-    systemProperties = [
-            BROWSER: System.getProperty('BROWSER', 'firefox')
-    ]
+
     doFirst {
         println 'Starting the embedded jetty server'
         jettyRun.daemon = true

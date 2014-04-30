@@ -1,20 +1,11 @@
-README
+# RnR Readme
 
-Project note 1/21/2014:  InfoSec has told us that if we are to continue improving RnR and connect it to the SalesForce API,
-we will need to make the project 100% JavaScript due to Java's security vulnerabilities.  We also need to include them
-(infosec@thoughtworks.com) in any discussions about integration with the SalesForce API and changing the project
-to JavaScript.
-
--GD
-
-~~~~~~~~~
 Thanks for your interest in contributing to the ThoughtWorks RnR project!
 
 To get started, you will want to clone and set this project up locally, helpful tips are included below.
 
-To start contributing to this project, you will need to contact Alyssa Nabors (anabors@thoughtworks.com) for access to the Trello board,
-where information project setup and current iteration is stored. You will also need to contact Landon Medlock (lmedlock@thoughtworks.com)
-with your GitHub username to be added as a contributor to the project.
+To start contributing to this project, you will need to contact the Chicago Beach for access to the Trello board,
+where information project setup and current iteration is stored.
 ~~~~~~~~~
 
 **Trello Etiquette**
@@ -36,32 +27,31 @@ as much detail as possible.
 
 **Things you might want to install**
 
-    IntelliJ Ultimate Edition
+    IntelliJ Ultimate Edition >= 13.1
     HomeBrew (http://brew.sh/ -- makes installation easy)
         Using Homebrew:
             Git
-            Maven
-            Tomcat
+            Gradle
+            Jetty
 
 
-**********************************
-BEFORE OPENING PROJECT IN INTELLIJ
-**********************************
+### In terminal:
+cd to project directory
+```gradle build```
 
-Run Maven compiler: compile in the directory where your pom xml file is located. (mvn compiler:compile)
+To run application:
+```gradle -q -Dorg.gradle.project.environment=dev jettyRun```
 
-To run the RnR on localhost:8080
-	open Run -> Edit Configurations -> Server tab
-		Plus sign (top left corner)
-			select Tomcat server -> local
+To run unit tests:
+```gradle test```
 
-		Plus sign (bottom box)
-			select Build Artifacts, select the exploded web app you created (only one option usually)
+To run functional tests:
+```gradle -q -Dorg.gradle.project.environment=test testFunctional```
 
-		Application Server: Tomcat 7.0 (copy/paste the CATALINA_BASE directory you get from typing catalina start in the terminal (remember to type catalina stop afterwards))
-
-	Run -> Edit Configurations -> Deployment tab
-Plus sign (for Deploy at the server startup box), select artifact, select the exploded web app artifact
+### In IntelliJ:
+USE IntelliJ 13.1!!!! (or greater.  It's a gradle-integration thing.)
+Import using build.gradle file.
+Run tasks using gradle toolbuttons.
 
 ~~~
 
