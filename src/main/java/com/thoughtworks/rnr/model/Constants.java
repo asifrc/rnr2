@@ -8,7 +8,7 @@ import java.util.List;
 public final class Constants {
     public static final double YEAR_IN_DAYS = 365.25d;
     public static final double DEFAULT_ACCRUAL_RATE = 10.0;
-    public static final LocalDate SALESFORCE_START_DATE = new LocalDate(2014, 1, 1);
+    public static final LocalDate START_DATE_JAN_1_2014 = new LocalDate(2014, 1, 1);
 
     public static final List<String> PERSONAL_DAY_CODES = new ArrayList<String>();
     public static final List<String> VACATION_DAY_CODES = new ArrayList<String>();

@@ -3,7 +3,6 @@ package functional;
 import com.thoughtworks.rnr.model.Constants;
 import org.jbehave.core.annotations.*;
 import org.joda.time.LocalDate;
-import org.junit.Ignore;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -57,7 +56,7 @@ public class NavigationSteps extends UserJourneyBase {
 
     @Given("I started on January 1 of this year")
     public void iStartedOnJanuary1() {
-        pickDate(START_DATE_FIELD_ID, new LocalDate());
+        pickDate(START_DATE_FIELD_ID, Constants.START_DATE_JAN_1_2014);
     }
 
     @Given("I have <rolloverDays> rollover days")
@@ -86,7 +85,7 @@ public class NavigationSteps extends UserJourneyBase {
 
     @Given("I started one month before the SalesForce accrual start date")
     public void iStartedOneMonthBeforeSalesForceStartDate(){
-        pickDate(START_DATE_FIELD_ID, Constants.SALESFORCE_START_DATE.minusMonths(1));
+        pickDate(START_DATE_FIELD_ID, Constants.START_DATE_JAN_1_2014.minusMonths(1));
     }
 
     @Given("I started the year with <vacationDays> vacation days")
@@ -101,7 +100,7 @@ public class NavigationSteps extends UserJourneyBase {
 
     @When("I request my number of vacation balance <days> days after the accrual start date")
     public void requestVacationBalanceAsOf(@Named("days") int days){
-        LocalDate endDate = Constants.SALESFORCE_START_DATE.plusDays(days);
+        LocalDate endDate = Constants.START_DATE_JAN_1_2014.plusDays(days);
         pickDate(END_DATE_FIELD_ID, endDate);
         iClickSubmit();
     }

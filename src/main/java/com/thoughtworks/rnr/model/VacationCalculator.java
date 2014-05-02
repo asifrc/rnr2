@@ -29,9 +29,9 @@ public class VacationCalculator {
     }
 
     private LocalDate getAccrualStartDate(Employee employee) {
-        LocalDate accrualStartDate = Constants.SALESFORCE_START_DATE;
+        LocalDate accrualStartDate = Constants.START_DATE_JAN_1_2014;
 
-        if(employee.getStartDate().isAfter(Constants.SALESFORCE_START_DATE)){
+        if(employee.getStartDate().isAfter(Constants.START_DATE_JAN_1_2014)){
             accrualStartDate = employee.getStartDate();
         }
 
