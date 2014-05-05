@@ -29,6 +29,13 @@ sourceSets {
 dependencies {
     def seleniumVersion = "2.40.0"
 
+    // To run functional tests, the system property $ENV must be set to 'test'
+    // so that the MockInterceptor is used in place of HomeInterceptor,
+    // and the tests don't try to log in to Okta
+    if (System.env.ENVIRONMENT==null) {
+        System.properties["ENVIRONMENT"] = 'prod'
+    }
+
     providedCompile "javax.servlet:servlet-api:2.5"
     compile group: 'org.springframework', name: 'spring-core', version:'4.0.1.RELEASE'
     compile group: 'org.springframework', name: 'spring-web', version:'4.0.1.RELEASE'
@@ -56,6 +63,10 @@ sourceSets.main.compileClasspath += configurations.providedCompile
 sourceSets.test.compileClasspath += configurations.providedCompile
 sourceSets.test.runtimeClasspath += configurations.providedCompile
 
+task wrapper(type:Wrapper){
+    gradleVersion = '1.12'
+}
+
 task jettyDaemon(type: org.gradle.api.plugins.jetty.JettyRun) {
     daemon = true
 }
@@ -68,7 +79,6 @@ test {
 }
 
 task testFunctional(type: Test, dependsOn:test) {
-    include '**/functional/*.*'
 
     doFirst {
         println 'Starting the embedded jetty server'
