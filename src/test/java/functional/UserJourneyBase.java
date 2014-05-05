@@ -3,8 +3,8 @@ package functional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxBinary;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,9 +15,7 @@ public class UserJourneyBase {
 
     @BeforeClass
     public void setUp() {
-        FirefoxBinary firefoxBinary = new FirefoxBinary();
-        firefoxBinary.setEnvironmentProperty("DISPLAY", ":99");
-        driver = new FirefoxDriver(firefoxBinary, null);
+        driver = new PhantomJSDriver(new DesiredCapabilities());
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
 
         driver.get(rootUrl());
