@@ -12,7 +12,7 @@
     <mvc:resources mapping="/scripts/**" location="/scripts/" />
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="test.properties"></property>
+        <property name="location" value="${ENVIRONMENT}.properties"></property>
     </bean>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
