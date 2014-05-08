@@ -19,9 +19,18 @@ configurations {
 sourceSets {
     selenium
     main {
+        java {
+            srcDir 'src/main/java'
+            if (System.env.ENVIRONMENT != 'test') {
+                exclude '**/StubOKTAController.java'
+            }
+        }
         output.classesDir = 'build/classes/production'
     }
     test {
+        java {
+            srcDir 'src/test/java'
+        }
         output.resourcesDir = 'build/classes/test'
     }
 }
@@ -29,8 +38,8 @@ sourceSets {
 dependencies {
     def seleniumVersion = "2.40.0"
 
-    // To run functional tests, the system property $ENV must be set to 'test'
-    // so that the MockInterceptor is used in place of HomeInterceptor,
+    // To run functional tests, the system property $ENVIRONMENT must be set to 'test'
+    // so that the StubOKTAController and view are available,
     // and the tests don't try to log in to Okta
     if (System.env.ENVIRONMENT == null) {
         System.properties["ENVIRONMENT"] = 'prod'
