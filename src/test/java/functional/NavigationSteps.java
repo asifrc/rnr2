@@ -30,10 +30,19 @@ public class NavigationSteps extends UserJourneyBase {
     public static final String SALESFORCE_INPUT_FIELD_ID = "sales-force-text";
 
     WebDriver driver;
+    private boolean isFirstRun = true;
 
     @BeforeScenario
     public void openBrowser() {
         driver = super.getDriver();
+        clickIfRedirectedToStubOKTA();
+    }
+
+    private void clickIfRedirectedToStubOKTA() {
+        if (isFirstRun) {
+            driver.findElement(By.id("submitStubOKTA")).click();
+            isFirstRun = false;
+        }
     }
 
     @AfterScenario
@@ -60,7 +69,7 @@ public class NavigationSteps extends UserJourneyBase {
     }
 
     @Given("I have <rolloverDays> rollover days")
-    public void iHaveNoRolloverDays(@Named("rolloverDays") double rolloverDays){
+    public void iHaveNoRolloverDays(@Named("rolloverDays") double rolloverDays) {
         enterRolloverDays(rolloverDays);
     }
 
@@ -84,7 +93,7 @@ public class NavigationSteps extends UserJourneyBase {
     }
 
     @Given("I started one month before the SalesForce accrual start date")
-    public void iStartedOneMonthBeforeSalesForceStartDate(){
+    public void iStartedOneMonthBeforeSalesForceStartDate() {
         pickDate(START_DATE_FIELD_ID, Constants.START_DATE_JAN_1_2014.minusMonths(1));
     }
 
@@ -99,7 +108,7 @@ public class NavigationSteps extends UserJourneyBase {
     }
 
     @When("I request my number of vacation balance <days> days after the accrual start date")
-    public void requestVacationBalanceAsOf(@Named("days") int days){
+    public void requestVacationBalanceAsOf(@Named("days") int days) {
         LocalDate endDate = Constants.START_DATE_JAN_1_2014.plusDays(days);
         pickDate(END_DATE_FIELD_ID, endDate);
         iClickSubmit();
@@ -159,6 +168,6 @@ public class NavigationSteps extends UserJourneyBase {
 
     private void setTextWithoutTyping(String fieldID, String value) {
         WebElement element = driver.findElement(By.id(fieldID));
-        ((JavascriptExecutor)driver).executeScript("arguments[0].value = arguments[1]", element, value);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1]", element, value);
     }
 }

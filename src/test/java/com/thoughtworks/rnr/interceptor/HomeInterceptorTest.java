@@ -1,11 +1,11 @@
 package com.thoughtworks.rnr.interceptor;
 
-import com.thoughtworks.rnr.model.Constants;
 import com.thoughtworks.rnr.service.SAMLService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +28,8 @@ public class HomeInterceptorTest {
     @Mock
     Object handler;
     private HomeInterceptor homeInterceptor;
-    private String oktaRedirectUrl = Constants.OKTA_REDIRECT_URL;
+    @Autowired
+    private String redirectUrl;
 
     @Before
     public void setUp() throws Exception {
@@ -39,8 +40,7 @@ public class HomeInterceptorTest {
     @Test
     public void shouldRedirectToOktaOnAGetRequest() throws Exception {
         homeInterceptor.preHandle(mockRequest, mockResponse, handler);
-        oktaRedirectUrl = Constants.OKTA_REDIRECT_URL;
-        verify(mockResponse).sendRedirect(oktaRedirectUrl);
+        verify(mockResponse).sendRedirect(redirectUrl);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class HomeInterceptorTest {
 
         homeInterceptor.preHandle(mockRequest, mockResponse, new Object());
 
-        verify(mockResponse).sendRedirect(oktaRedirectUrl);
+        verify(mockResponse).sendRedirect(redirectUrl);
     }
 
     @Test
@@ -62,6 +62,7 @@ public class HomeInterceptorTest {
         verify(mockResponse, times(0)).sendRedirect(anyString());
         assertTrue(interceptorReturn);
     }
+
     @Ignore
     @Test
     public void shouldRedirectToOKTALoginWhenNoPrincipalIsAttachedToTheSession() throws Exception {
@@ -72,7 +73,7 @@ public class HomeInterceptorTest {
 
     private void shouldRedirectToSAMLRequest() throws Exception {
         String mockSAMLRequest = "SAMLRequest";
-        when(oktaRedirectUrl).thenReturn(mockSAMLRequest);
+        when(redirectUrl).thenReturn(mockSAMLRequest);
 
         boolean interceptorReturn = homeInterceptor.preHandle(mockRequest, mockResponse, handler);
 

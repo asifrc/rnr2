@@ -13,9 +13,7 @@ public final class Constants {
     public static final List<String> PERSONAL_DAY_CODES = new ArrayList<String>();
     public static final List<String> VACATION_DAY_CODES = new ArrayList<String>();
 
-    public static final String OKTA_REDIRECT_URL = "https://thoughtworks.oktapreview.com/app/template_saml_2_0/k21tpw64VPAMDOMKRXBS/sso/saml";
-
-    static{
+    static {
         PERSONAL_DAY_CODES.add("Caregiver leave");
         PERSONAL_DAY_CODES.add("Sick (all except US/CAN)");
         PERSONAL_DAY_CODES.add("Dr, dentist ,antenatel (UK)");
