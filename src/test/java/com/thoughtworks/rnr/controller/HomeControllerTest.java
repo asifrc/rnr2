@@ -1,6 +1,7 @@
 package com.thoughtworks.rnr.controller;
 
 import com.thoughtworks.rnr.model.AccrualRateCalculator;
+import com.thoughtworks.rnr.model.Constants;
 import com.thoughtworks.rnr.model.Employee;
 import com.thoughtworks.rnr.model.PersonalDaysCalculator;
 import com.thoughtworks.rnr.service.*;
@@ -11,10 +12,12 @@ import org.mockito.Mock;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -73,9 +76,9 @@ public class HomeControllerTest {
         when(mockPersonalDaysCalculator.calculatePersonalDays(any(Employee.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(0d);
 
         assertThat(homeController.postDate(startDate, rolloverDays, accrualRate, salesForceText, endDate).getViewName(), is("home"));
-
-        verify(mockSalesForceParserService, times(2)).extractDatesAndHoursFromSalesForceText(anyString(), anyList());
-        verify(mockEmployeeService, times(1)).createEmployee(any(LocalDate.class), anyString(), anyMap(), anyMap(), anyString());
+        verify(mockSalesForceParserService).extractDatesAndHoursFromSalesForceText(salesForceText, Constants.PERSONAL_DAY_CODES);
+        verify(mockSalesForceParserService).extractDatesAndHoursFromSalesForceText(salesForceText, Constants.VACATION_DAY_CODES);
+        verify(mockEmployeeService, times(1)).createEmployee(null, rolloverDays, new HashMap<LocalDate, Double>(), new HashMap<LocalDate, Double>(), accrualRate);
         verify(mockDateParserService, times(2)).parse(anyString());
     }
 }
