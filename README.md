@@ -27,7 +27,7 @@ as much detail as possible.
 
 **Things you might want to install**
 
-    IntelliJ Ultimate Edition >= 13.1
+    IntelliJ Ultimate Edition >= 13.1 (See notes below on IntelliJ)
     HomeBrew (http://brew.sh/ -- makes installation easy)
         Using Homebrew:
             Git
@@ -49,7 +49,11 @@ To run functional tests:
 ```gradle -q -Dorg.gradle.project.environment=test testFunctional```
 
 ### In IntelliJ:
-USE IntelliJ 13.1!!!! (or greater.  It's a gradle-integration thing.)
+One version of IntelliJ that works is an [Early Access Project Version](http://confluence.jetbrains.com/display/IDEADEV/IDEA+13.1+EAP)
+
+This version has a known bug that is incompatible with Gradle:
+IntelliJ IDEA 13.1.2
+Build #IU-135.690, built on April 17, 2014
 Import using build.gradle file.
 Run tasks using gradle toolbuttons.
 
