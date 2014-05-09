@@ -21,7 +21,7 @@ sourceSets {
     main {
         java {
             srcDir 'src/main/java'
-            if (System.env.ENVIRONMENT != 'test') {
+            if (environment != 'test') {
                 exclude '**/StubOKTAController.java'
             }
         }
@@ -37,13 +37,6 @@ sourceSets {
 
 dependencies {
     def seleniumVersion = "2.40.0"
-
-    // To run functional tests, the system property $ENVIRONMENT must be set to 'test'
-    // so that the StubOKTAController and view are available,
-    // and the tests don't try to log in to Okta
-    if (System.env.ENVIRONMENT == null) {
-        System.properties["ENVIRONMENT"] = 'prod'
-    }
 
     providedCompile "javax.servlet:servlet-api:2.5"
     compile group: 'org.springframework', name: 'spring-core', version: '4.0.1.RELEASE'
