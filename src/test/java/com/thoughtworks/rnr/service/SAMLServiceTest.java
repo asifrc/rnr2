@@ -6,6 +6,7 @@ public class SAMLServiceTest {
 
     private final String oktaRedirectURL = "https://thoughtworks.oktapreview.com/app/template_saml_2_0/k21tpw64VPAMDOMKRXBS/sso/saml";
     private SAMLService samlService;
+    private String stringFromOKTACallback = "stringFromOKTACallback";
 
     @Before
     public void setup() {

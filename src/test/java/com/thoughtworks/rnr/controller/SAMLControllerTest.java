@@ -1,42 +1,37 @@
 package com.thoughtworks.rnr.controller;
 
-import org.apache.xerces.impl.dv.util.Base64;
+import com.thoughtworks.rnr.service.SAMLService;
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.mockito.Mock;
+import org.opensaml.ws.security.SecurityPolicyException;
+import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * Created by kpradhan on 4/24/14.
- */
 public class SAMLControllerTest {
 
     @Mock
     HttpServletRequest httpServletRequest;
-
     @Mock
-    HttpServletResponse httpServletResponse;
+    SAMLService samlService;
 
     SAMLController samlController;
+    String samlAssertion = "samlAssertion";
+    String samlResponse = "SAMLResponse";
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        samlController = new SAMLController();
+        samlController = new SAMLController(samlService);
     }
 
-    @Ignore
     @Test
-    public void sendToHomeShouldGetSAMLResponseFromRequest() {
-        samlController.sendToHome(httpServletRequest, httpServletResponse);
-        verify(httpServletRequest).getParameter("SAMLResponse");
+    public void shouldValidateSAMLResponse() throws UnsupportedEncodingException, SecurityPolicyException {
+        samlController.handleOKTACallback(httpServletRequest);
+//        verify(samlService.getSAMLResponse(anyString()));
+
     }
 }
