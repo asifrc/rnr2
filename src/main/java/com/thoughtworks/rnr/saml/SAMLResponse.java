@@ -14,6 +14,7 @@ import org.opensaml.xml.signature.SignatureValidator;
 import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.ByteArrayInputStream;
@@ -203,7 +204,9 @@ public class SAMLResponse {
     private XMLObject parseSAML(String response) throws SecurityPolicyException {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(response.getBytes("UTF-8"));
-            Element root = new BasicParserPool().parse(bais).getDocumentElement();
+            BasicParserPool basicParserPool = new BasicParserPool();
+            Document document = basicParserPool.parse(bais);
+            Element root = document.getDocumentElement();
 
             return org.opensaml.Configuration.getUnmarshallerFactory().getUnmarshaller(root).unmarshall(root);
 
