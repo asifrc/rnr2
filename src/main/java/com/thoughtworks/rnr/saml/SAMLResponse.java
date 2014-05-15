@@ -212,6 +212,7 @@ public class SAMLResponse {
 
         } catch (Exception e) {
             logger.debug(e.getMessage(), e);
+            System.out.println(response);
             throw new SecurityPolicyException("Problem parsing the response.");
         }
     }

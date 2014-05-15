@@ -32,15 +32,15 @@ public class SAMLService {
     private List<String> filteredHeaders;
 
     public SAMLService(String configFilePath, String loggedInKey, String loggedOutKey) throws SecurityPolicyException, IOException {
-        init(configFilePath, loggedInKey, loggedOutKey);
+        init(configFilePath);
     }
 
     public SAMLService()  {
     }
 
-    public void init(String configFilePath, String loggedInKey, String loggedOutKey) throws SecurityPolicyException, IOException {
-        this.loggedInKey = loggedInKey;
-        this.loggedOutKey = loggedOutKey;
+    public void init(String configFilePath) throws SecurityPolicyException, IOException {
+        this.loggedInKey = "okta.rnr.user";
+        this.loggedInKey = "okta.rnr.logged_out_user";
         this.configFilePath = configFilePath;
 
         String file = readFile(configFilePath);
@@ -103,7 +103,7 @@ public class SAMLService {
         }
         return redirectUrl;
     }
-
+// Toolkit authenticator uses this for its authentication
     public SAMLResponse getSAMLResponse(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
         assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
         return getValidator().getSAMLResponse(assertion, getConfiguration());
