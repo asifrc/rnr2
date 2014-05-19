@@ -48,7 +48,7 @@ To run unit tests:
 ```gradle test```
 
 To run functional tests:
-```gradle -q -Dorg.gradle.project.environment=test testFunctional```
+```gradle -Dorg.gradle.project.environment=test testFunctional```
 
 
 This version has a known bug that is incompatible with Gradle:

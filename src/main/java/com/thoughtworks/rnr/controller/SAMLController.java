@@ -19,7 +19,6 @@ import java.security.cert.CertificateException;
 
 public class SAMLController {
 
-    @Autowired
     private SAMLService samlService;
 
     @Autowired

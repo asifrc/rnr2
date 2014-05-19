@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,13 +27,14 @@ public class HomeInterceptorTest {
     @Mock
     Object handler;
     private HomeInterceptor homeInterceptor;
-    @Autowired
+
     private String redirectUrl;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        homeInterceptor = new HomeInterceptor(mockSAMLService);
+        redirectUrl = "redirectURL";
+        homeInterceptor = new HomeInterceptor(redirectUrl);
     }
 
     @Test

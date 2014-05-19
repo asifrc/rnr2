@@ -134,7 +134,13 @@ public class SAMLResponse {
         }
 
         Conditions conditions = assertion.getConditions();
+        validateConditionTimeStamp(conditions);
 
+
+        return assertion;
+    }
+
+    private void validateConditionTimeStamp(Conditions conditions) throws SecurityPolicyException {
         // validate conditions timestamps: notBefore, notOnOrAfter
         Date now = clock.dateTimeNow().toDate();
         Date condition_notBefore = conditions.getNotBefore().toDate();
@@ -146,8 +152,6 @@ public class SAMLResponse {
             logger.debug("Current time: [" + now + "] NotOnOrAfter: [" + condition_NotOnOrAfter + "]");
             throw new SecurityPolicyException("Conditions have expired");
         }
-
-        return assertion;
     }
 
     /**
