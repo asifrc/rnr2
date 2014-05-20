@@ -29,14 +29,12 @@ public class SAMLController {
     //    TODO: http://sureshatt.blogspot.com/2012/11/how-to-read-saml-20-response-with.html
 
     @RequestMapping(value = "/auth/saml/callback", method = RequestMethod.POST)
-    public String handleOKTACallback(HttpServletRequest request) throws IOException, CertificateException, UnmarshallingException, ValidationException, ParserConfigurationException, SAXException, SecurityPolicyException {
+    public String handleOKTACallback(HttpServletRequest request) throws IOException, UnmarshallingException, ValidationException, ParserConfigurationException, SAXException, SecurityPolicyException, CertificateException {
         String oktaResponse = request.getParameter("SAMLResponse");
         Principal user = samlService2.verifyOKTASignOn(oktaResponse);
         samlService2.putPrincipalInSessionContext(request, user);
 
         return "redirect:/home";
     }
-
-
 
 }

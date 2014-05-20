@@ -4,6 +4,7 @@
 //import com.thoughtworks.rnr.saml.Configuration;
 //import com.thoughtworks.rnr.saml.SAMLResponse;
 //import com.thoughtworks.rnr.saml.SAMLValidator;
+//import com.thoughtworks.rnr.saml.util.SimpleClock;
 //import org.apache.commons.codec.binary.Base64;
 //import org.opensaml.ws.security.SecurityPolicyException;
 //import org.springframework.stereotype.Component;
@@ -44,7 +45,7 @@
 //        this.configFilePath = configFilePath;
 //
 //        String file = readFile(configFilePath);
-//        validator = new SAMLValidator();
+//        validator = new SAMLValidator(new SimpleClock());
 //        configuration = validator.getConfiguration(file);
 //
 //        for (Application application : configuration.getApplications().values()) {

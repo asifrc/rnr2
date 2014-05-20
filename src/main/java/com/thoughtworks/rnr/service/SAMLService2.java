@@ -8,7 +8,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.ws.security.SecurityPolicyException;
 import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.io.UnmarshallerFactory;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.opensaml.xml.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import java.security.Principal;
 import java.security.cert.CertificateException;
 @Component
 public class SAMLService2 {
-    private final UnmarshallerFactory unmarshallerFactory;
     private final String loggedInKey = "okta.rnr.user";
     private final String loggedOutKey = "okta.rnr.logged_out_user";
     private SAMLValidator validator;
@@ -52,8 +50,6 @@ public class SAMLService2 {
             e.printStackTrace();
         }
 
-
-        unmarshallerFactory = org.opensaml.xml.Configuration.getUnmarshallerFactory();
     }
 
     public Principal verifyOKTASignOn(String responseString) throws UnmarshallingException, IOException, CertificateException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
