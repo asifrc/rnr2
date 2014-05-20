@@ -33,6 +33,6 @@ public class HomeInterceptor extends HandlerInterceptorAdapter {
     }
 
     private boolean isNull(HttpSession session) {
-        return session == null || session.getAttribute("user") == null;
+        return (session == null) || (session.getAttribute("okta.rnr.user") == null);
     }
 }

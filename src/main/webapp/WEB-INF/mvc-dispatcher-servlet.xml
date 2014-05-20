@@ -38,10 +38,6 @@
             <mvc:exclude-mapping path="/auth/saml/callback"/>
             <bean class="com.thoughtworks.rnr.interceptor.HomeInterceptor"/>
         </mvc:interceptor>
-        <mvc:interceptor>
-            <mvc:mapping path="/auth/saml/callback"/>
-            <bean class="com.thoughtworks.rnr.interceptor.OktaInterceptor"/>
-        </mvc:interceptor>
     </mvc:interceptors>
 
 </beans>

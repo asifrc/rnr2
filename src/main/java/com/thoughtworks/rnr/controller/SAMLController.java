@@ -1,6 +1,6 @@
 package com.thoughtworks.rnr.controller;
 
-import com.thoughtworks.rnr.service.SAMLService2;
+import com.thoughtworks.rnr.service.SAMLService;
 import org.opensaml.ws.security.SecurityPolicyException;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.opensaml.xml.validation.ValidationException;
@@ -13,28 +13,23 @@ import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.security.Principal;
 import java.security.cert.CertificateException;
 
 @Controller
 public class SAMLController {
 
-    private SAMLService2 samlService2;
+    private SAMLService samlService;
 
     @Autowired
-    public SAMLController (SAMLService2 samlService2) {
-        this.samlService2 = samlService2;
+    public SAMLController (SAMLService samlService) {
+        this.samlService = samlService;
     }
-
-    //    TODO: http://sureshatt.blogspot.com/2012/11/how-to-read-saml-20-response-with.html
 
     @RequestMapping(value = "/auth/saml/callback", method = RequestMethod.POST)
     public String handleOKTACallback(HttpServletRequest request) throws IOException, UnmarshallingException, ValidationException, ParserConfigurationException, SAXException, SecurityPolicyException, CertificateException {
-        String oktaResponse = request.getParameter("SAMLResponse");
-        Principal user = samlService2.verifyOKTASignOn(oktaResponse);
-        samlService2.putPrincipalInSessionContext(request, user);
+        String samlResponse = request.getParameter("SAMLResponse");
+        samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
 
         return "redirect:/home";
     }
-
 }

@@ -1,195 +1,102 @@
-//package com.thoughtworks.rnr.service;
-//
-//import com.thoughtworks.rnr.saml.Application;
-//import com.thoughtworks.rnr.saml.Configuration;
-//import com.thoughtworks.rnr.saml.SAMLResponse;
-//import com.thoughtworks.rnr.saml.SAMLValidator;
-//import com.thoughtworks.rnr.saml.util.SimpleClock;
-//import org.apache.commons.codec.binary.Base64;
-//import org.opensaml.ws.security.SecurityPolicyException;
-//import org.springframework.stereotype.Component;
-//
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpSession;
-//import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.IOException;
-//import java.io.UnsupportedEncodingException;
-//import java.nio.MappedByteBuffer;
-//import java.nio.channels.FileChannel;
-//import java.nio.charset.Charset;
-//import java.security.Principal;
-//import java.util.Collection;
-//import java.util.List;
-//
-//@Component
-//public class SAMLService {
-//    private String loggedInKey;
-//    private String loggedOutKey;
-//    private String configFilePath;
-//    private SAMLValidator validator;
-//    private Configuration configuration;
-//    private Application defaultApplication;
-//    private List<String> filteredHeaders;
-//
-//    public SAMLService(String configFilePath, String loggedInKey, String loggedOutKey) throws SecurityPolicyException, IOException {
-//        init(configFilePath);
-//    }
-//
-//    public SAMLService()  {
-//    }
-//
-//    public void init(String configFilePath) throws SecurityPolicyException, IOException {
-//        this.loggedInKey = "okta.rnr.user";
-//        this.loggedInKey = "okta.rnr.logged_out_user";
-//        this.configFilePath = configFilePath;
-//
-//        String file = readFile(configFilePath);
-//        validator = new SAMLValidator(new SimpleClock());
-//        configuration = validator.getConfiguration(file);
-//
-//        for (Application application : configuration.getApplications().values()) {
-//            if (defaultApplication == null) {
-//                defaultApplication = application;
-//            }
-//        }
-//
-//    }
-//
-//    public void putPrincipalInSessionContext(HttpServletRequest request, Principal principal) {
-//        final HttpSession httpSession = request.getSession();
-//        httpSession.setAttribute(loggedInKey, principal);
-//        httpSession.setAttribute(loggedOutKey, null);
-//    }
-//
-//    public boolean isPrincipalAlreadyInSessionContext(final HttpServletRequest request, final Principal principal) {
-//        Principal currentPrincipal = (Principal) request.getSession().getAttribute(loggedInKey);
-//        return currentPrincipal != null && currentPrincipal.getName() != null && principal != null && currentPrincipal.getName().equals(principal.getName());
-//    }
-//
-//    public void removePrincipalFromSessionContext(final HttpServletRequest request) {
-//        final HttpSession httpSession = request.getSession();
-//        httpSession.setAttribute(loggedInKey, null);
-//        httpSession.setAttribute(loggedOutKey, Boolean.TRUE);
-//    }
-//
-//    public Principal getUserPrincipal(final SAMLResponse response) {
-//        return new Principal() {
-//            public String getName() {
-//                return response.getUserID();
-//            }
-//        };
-//    }
-//
-//    public String readFile(String path) throws IOException {
-//        FileInputStream stream = new FileInputStream(new File(path));
-//        try {
-//            FileChannel fc = stream.getChannel();
-//            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-//            return Charset.forName("UTF-8").decode(bb).toString();
-//        }
-//        finally {
-//            stream.close();
-//        }
-//    }
-//
-//    public String getAuthRedirectUrl(String redirectUrl, String relayState) {
-//        if (!redirectUrl.contains("RelayState") && relayState != null && !relayState.isEmpty()) {
-//            if (redirectUrl.contains("?")) {
-//                redirectUrl += "&";
-//            } else {
-//                redirectUrl += "?";
-//            }
-//            redirectUrl += "RelayState=" + relayState;
-//        }
-//        return redirectUrl;
-//    }
-//// Toolkit authenticator uses this for its authentication
-//    public SAMLResponse getSAMLResponse(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
-//        assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
-//        return getValidator().getSAMLResponse(assertion, getConfiguration(), timeProvider);
-//    }
-//
-//    public SAMLValidator getValidator() {
-//        return validator;
-//    }
-//
-//    public void setValidator(SAMLValidator validator) {
-//        this.validator = validator;
-//    }
-//
-//    public Configuration getConfiguration() {
-//        return configuration;
-//    }
-//
-//    public void setConfiguration(Configuration configuration) {
-//        this.configuration = configuration;
-//    }
-//
-//    public Application getDefaultApplication() {
-//        return defaultApplication;
-//    }
-//
-//    public void setDefaultApplication(Application defaultApplication) {
-//        this.defaultApplication = defaultApplication;
-//    }
-//
-//    public Principal getPrincipalFromSession(HttpServletRequest request) {
-//        if (request.getSession().getAttribute(loggedOutKey) != null) {
-//            return null;
-//        }
-//        return (Principal) request.getSession().getAttribute(loggedInKey);
-//    }
-//
-//    public List<String> getFilteredHeaders() {
-//        return filteredHeaders;
-//    }
-//
-//    public void setFilteredHeaders(List<String> filteredHeaders) {
-//        this.filteredHeaders = filteredHeaders;
-//    }
-//
-//    public boolean shouldHandleRequest(HttpServletRequest request) {
-//        if (filteredHeaders == null) {
-//            return true;
-//        }
-//
-//        String reqUrl = request.getRequestURL().toString();
-//        if (reqUrl.contains("/ForgotLoginDetails/") || reqUrl.contains("/rest/api/")) {
-//            return false;
-//        }
-//
-//        String header;
-//        for (String headerName : filteredHeaders) {
-//            header = request.getHeader(headerName);
-//            if (header != null && !header.trim().isEmpty()) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
-//    public boolean isSPUser(HttpServletRequest request, String username, Collection<String> uGroups) {
-//        return !isIpAllowedForOkta(request) || !isUsernameAllowedForOkta(username) || isInSPGroups(uGroups);
-//    }
-//
-//    public boolean isIpAllowedForOkta(String ip) {
-//        return getConfiguration().isIpAllowedForOkta(ip);
-//    }
-//
-//    public boolean isIpAllowedForOkta(HttpServletRequest request) {
-//        return isIpAllowedForOkta(request.getRemoteAddr());
-//    }
-//
-//    public boolean isSPUserOrGroupNamesUsed() {
-//        return getConfiguration().isSPUsernamesUsed() || getConfiguration().isSPGroupnamesUsed();
-//    }
-//
-//    private boolean isUsernameAllowedForOkta(String username) {
-//        return getConfiguration().isUsernameAllowedForOkta(username);
-//    }
-//
-//    private boolean isInSPGroups(Collection<String> userGroups) {
-//        return getConfiguration().isInSPGroups(userGroups);
-//    }
-//}
+package com.thoughtworks.rnr.service;
+
+import com.thoughtworks.rnr.saml.Configuration;
+import com.thoughtworks.rnr.saml.SAMLResponse;
+import com.thoughtworks.rnr.saml.SAMLValidator;
+import com.thoughtworks.rnr.saml.util.Clock;
+import org.apache.commons.codec.binary.Base64;
+import org.opensaml.DefaultBootstrap;
+import org.opensaml.ws.security.SecurityPolicyException;
+import org.opensaml.xml.ConfigurationException;
+import org.opensaml.xml.io.UnmarshallingException;
+import org.opensaml.xml.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.security.Principal;
+import java.security.cert.CertificateException;
+
+@Component
+public class SAMLService {
+    private final String LOGGED_IN_KEY = "okta.rnr.user";
+    private final String LOGGED_OUT_KEY = "okta.rnr.logged_out_user";
+    private final String CONFIG_FILE_PATH = "src/main/java/com/thoughtworks/rnr/config.xml";
+
+    private SAMLValidator validator;
+    private String file;
+    private Configuration configuration;
+
+    // Autowired bean in dispatcher servlet, used for testing purposes.
+    // (Switches whether a real clock or a fake clock is used)
+    @Autowired
+    private Clock timeProvider;
+
+    public SAMLService() throws IOException {
+        bootstrapOpenSAMLLibrary();
+        setUpValidatorAndConfiguration();
+    }
+
+    public void setSessionWhenSAMLResponseIsValid(HttpServletRequest request, String samlResponse) throws IOException, SecurityPolicyException, CertificateException, ParserConfigurationException, ValidationException, SAXException, UnmarshallingException {
+        SAMLResponse decodedResponse = decodeAndUnmarshall(samlResponse);
+        Principal user = getUserFromSAMLResponse(decodedResponse);
+        putUserInSession(request, user);
+    }
+
+    private void bootstrapOpenSAMLLibrary() {
+        try {
+            DefaultBootstrap.bootstrap();
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setUpValidatorAndConfiguration() throws IOException {
+        file = readFile(CONFIG_FILE_PATH);
+        try {
+            validator = new SAMLValidator(timeProvider);
+            configuration = validator.getConfiguration(file);
+        } catch (SecurityPolicyException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readFile(String path) throws IOException {
+        FileInputStream stream = new FileInputStream(new File(path));
+        try {
+            FileChannel fc = stream.getChannel();
+            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            return Charset.forName("UTF-8").decode(bb).toString();
+        }
+        finally {
+            stream.close();
+        }
+    }
+
+    private SAMLResponse decodeAndUnmarshall(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
+        assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
+        return validator.getSAMLResponse(assertion, configuration, timeProvider);
+    }
+
+    private Principal getUserFromSAMLResponse(final SAMLResponse samlResponse) throws UnmarshallingException, IOException, CertificateException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
+        Principal user =  new Principal() {
+            public String getName() {
+                return samlResponse.getUserID();
+            }
+        };
+        return user;
+    }
+
+    private void putUserInSession(HttpServletRequest request, Principal user) {
+        final HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(LOGGED_IN_KEY, user);
+        httpSession.setAttribute(LOGGED_OUT_KEY, null);
+    }
+}
