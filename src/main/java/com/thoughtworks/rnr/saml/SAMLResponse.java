@@ -2,7 +2,6 @@ package com.thoughtworks.rnr.saml;
 
 //import com.google.inject.Inject;
 import com.thoughtworks.rnr.saml.util.Clock;
-import com.thoughtworks.rnr.saml.util.SimpleClock;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml2.core.*;
 import org.opensaml.saml2.core.validator.ResponseSchemaValidator;
@@ -43,9 +42,6 @@ public class SAMLResponse {
      *                      verify the responseString's signature.
      * @throws SecurityPolicyException if the response fails validation
      */
-    public SAMLResponse(String responseString, Configuration configuration) throws SecurityPolicyException {
-        this(responseString, configuration, new SimpleClock());
-    }
 
     public SAMLResponse(String responseString, Configuration configuration, Clock clock) throws SecurityPolicyException {
         this.clock = clock;

@@ -32,7 +32,6 @@ public class SAMLController {
     public String handleOKTACallback(HttpServletRequest request) throws IOException, CertificateException, UnmarshallingException, ValidationException, ParserConfigurationException, SAXException, SecurityPolicyException {
         String oktaResponse = request.getParameter("SAMLResponse");
 
-        System.out.println("\n\n\n\n"+oktaResponse+"\n\n\n\n");
 
 //        SAMLService2 samlService2 = new SAMLService2();
 //        Principal user = samlService2.verifyOKTASignOn(oktaResponse);

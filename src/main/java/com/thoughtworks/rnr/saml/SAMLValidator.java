@@ -1,5 +1,6 @@
 package com.thoughtworks.rnr.saml;
 
+import com.thoughtworks.rnr.saml.util.SimpleClock;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.ws.security.SecurityPolicyException;
 import org.opensaml.xml.ConfigurationException;
@@ -93,6 +94,6 @@ public class SAMLValidator {
      * @throws SecurityPolicyException if there is a problem while parsing or validating the response
      */
     public SAMLResponse getSAMLResponse(String responseString, Configuration configuration) throws SecurityPolicyException {
-        return new SAMLResponse(responseString, configuration);
+        return new SAMLResponse(responseString, configuration, new SimpleClock());
     }
 }
