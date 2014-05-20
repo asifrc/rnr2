@@ -43,7 +43,7 @@ public class SAMLService2 {
             e.printStackTrace();
         }
         try {
-            String file = readFile("src/test/resources/config.xml");
+            String file = readFile("src/main/java/com/thoughtworks/rnr/config.xml");
             validator = new SAMLValidator(timeProvider);
             configuration = validator.getConfiguration(file);
         } catch (SecurityPolicyException e) {
@@ -82,7 +82,7 @@ public class SAMLService2 {
         httpSession.setAttribute(loggedOutKey, null);
     }
 
-    public SAMLResponse getSAMLResponse(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
+    private SAMLResponse getSAMLResponse(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
         assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
         return validator.getSAMLResponse(assertion, configuration, timeProvider);
     }
