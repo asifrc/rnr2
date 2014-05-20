@@ -28,19 +28,19 @@ public class HomeController {
     private final AccrualRateCalculator accrualRateCalculator;
     private final DateParserService dateParserService;
     private final PersonalDaysCalculator personalDaysCalculator;
-    private SAMLService SAMLService;
+    private SAMLService2 samlService2;
 
     @Autowired
     public HomeController(EmployeeService employeeService, SalesForceParserService salesForceParserService,
                           VacationCalculatorService vacationCalculatorService, AccrualRateCalculator accrualRateCalculator,
-                          DateParserService dateParserService, PersonalDaysCalculator personalDaysCalculator, SAMLService SAMLService) {
+                          DateParserService dateParserService, PersonalDaysCalculator personalDaysCalculator, SAMLService2 samlService2) {
         this.employeeService = employeeService;
         this.salesForceParserService = salesForceParserService;
         this.vacationCalculatorService = vacationCalculatorService;
         this.accrualRateCalculator = accrualRateCalculator;
         this.dateParserService = dateParserService;
         this.personalDaysCalculator = personalDaysCalculator;
-        this.SAMLService = SAMLService;
+        this.samlService2 = samlService2;
     }
 
     @RequestMapping(value="/", method = RequestMethod.GET)

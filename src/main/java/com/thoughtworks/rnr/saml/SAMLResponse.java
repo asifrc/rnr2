@@ -26,10 +26,10 @@ public class SAMLResponse {
 
     private static final Logger logger = LoggerFactory.getLogger(SAMLResponse.class);
 
-    private final Clock clock;
     private final Response response;
     private final Assertion assertion;
     private final Configuration configuration;
+    private final Clock clock;
     private final Application app;
     private final Map<String, List<String>> attributes;
 
@@ -44,8 +44,8 @@ public class SAMLResponse {
      */
 
     public SAMLResponse(String responseString, Configuration configuration, Clock clock) throws SecurityPolicyException {
-        this.clock = clock;
         this.configuration = configuration;
+        this.clock = clock;
         this.response = validatedResponse(responseString);
         this.app = configuration.getApplication(getIssuer());
         this.assertion = validatedAssertion(response);

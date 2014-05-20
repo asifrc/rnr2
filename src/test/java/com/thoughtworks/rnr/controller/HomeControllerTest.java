@@ -39,7 +39,7 @@ public class HomeControllerTest {
     @Mock
     PersonalDaysCalculator mockPersonalDaysCalculator;
     @Mock
-    SAMLService mockSAMLService;
+    SAMLService2 mockSAMLService;
     private String startDate;
     private String rolloverDays;
     private String accrualRate;

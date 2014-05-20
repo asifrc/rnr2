@@ -14,6 +14,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="${org.gradle.project.environment}.properties"></property>
     </bean>
+
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
@@ -25,6 +26,9 @@
 
     <bean id="redirectUrl" class="java.lang.String">
         <constructor-arg value="${redirectUrl}"/>
+    </bean>
+
+    <bean id="timeProvider" class="${timeProvider}">
     </bean>
 
     <mvc:interceptors>

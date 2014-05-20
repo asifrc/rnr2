@@ -1,6 +1,7 @@
 package com.thoughtworks.rnr.saml;
 
 import com.thoughtworks.rnr.saml.util.Clock;
+import com.thoughtworks.rnr.saml.util.SimpleClock;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.ws.security.SecurityPolicyException;
 import org.opensaml.xml.ConfigurationException;
@@ -71,7 +72,7 @@ public class SAMLResponseTest {
             stream.close();
         }
 
-        SAMLResponse response = new SAMLResponse(assertion, configuration, clock);
+        SAMLResponse response = new SAMLResponse(assertion, configuration, new SimpleClock());
         assertEquals(response.getDestination(), DESTINATION);
         assertEquals(response.getAudience(), AUDIENCE);
         assertEquals(response.getRecipient(), RECIPIENT);

@@ -1,6 +1,6 @@
 package com.thoughtworks.rnr.controller;
 
-import com.thoughtworks.rnr.service.SAMLService;
+import com.thoughtworks.rnr.service.SAMLService2;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.opensaml.ws.security.SecurityPolicyException;
@@ -16,7 +16,7 @@ public class SAMLControllerTest {
     @Mock
     HttpServletRequest httpServletRequest;
     @Mock
-    SAMLService samlService;
+    SAMLService2 samlService2;
 
     SAMLController samlController;
     String samlAssertion = "samlAssertion";
@@ -25,7 +25,7 @@ public class SAMLControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        samlController = new SAMLController(samlService);
+        samlController = new SAMLController(samlService2);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.thoughtworks.rnr.saml;
 
-import com.thoughtworks.rnr.saml.util.SimpleClock;
+import com.thoughtworks.rnr.saml.util.Clock;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.ws.security.SecurityPolicyException;
 import org.opensaml.xml.ConfigurationException;
@@ -27,7 +27,7 @@ public class SAMLValidator {
      * Constructs a SAMLValidator
      * @throws SecurityPolicyException if there is a problem while loading the openSAML library
      */
-    public SAMLValidator() throws SecurityPolicyException {
+    public SAMLValidator(Clock clock) throws SecurityPolicyException {
         try {
             DefaultBootstrap.bootstrap();
         } catch (ConfigurationException e) {
@@ -91,9 +91,10 @@ public class SAMLValidator {
      * @param responseString The SAMLResponse sent by an IdP. The responseString must NOT be Base64 encoded.
      * @param configuration Configuration that includes the IdP's public certificate necessary to
      *                      verify the responseString's signature.
+     * @param clock
      * @throws SecurityPolicyException if there is a problem while parsing or validating the response
      */
-    public SAMLResponse getSAMLResponse(String responseString, Configuration configuration) throws SecurityPolicyException {
-        return new SAMLResponse(responseString, configuration, new SimpleClock());
+    public SAMLResponse getSAMLResponse(String responseString, Configuration configuration, Clock clock) throws SecurityPolicyException {
+        return new SAMLResponse(responseString, configuration, clock);
     }
 }

@@ -1,5 +1,6 @@
 package com.thoughtworks.rnr.saml;
 
+import com.thoughtworks.rnr.saml.util.SimpleClock;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.ws.security.SecurityPolicyException;
@@ -42,7 +43,7 @@ public class SAMLValidatorTest {
     @BeforeTest
     public void setup() throws SecurityPolicyException, IOException {
         helper = new TestsHelper();
-        validator = new SAMLValidator();
+        validator = new SAMLValidator(new SimpleClock());
         configuration = validator.getConfigurationFrom("src/test/resources/config.xml");
         application = configuration.getDefaultApplication();
     }
@@ -80,7 +81,7 @@ public class SAMLValidatorTest {
         }
 
         try {
-            SAMLResponse response = validator.getSAMLResponse(responseStr, configuration);
+            SAMLResponse response = validator.getSAMLResponse(responseStr, configuration, new SimpleClock());
         } catch (SecurityPolicyException e) {
             assertEquals(e.getMessage(), "Conditions have expired");
         } catch (Exception e) {

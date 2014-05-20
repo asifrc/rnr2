@@ -1,6 +1,6 @@
 package com.thoughtworks.rnr.interceptor;
 
-import com.thoughtworks.rnr.service.SAMLService;
+import com.thoughtworks.rnr.service.SAMLService2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HomeInterceptorTest {
     @Mock
-    SAMLService mockSAMLService;
+    SAMLService2 mockSAMLService;
     @Mock
     HttpServletRequest mockRequest;
     @Mock

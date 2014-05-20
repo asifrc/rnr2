@@ -3,6 +3,7 @@ package com.thoughtworks.rnr.service;
 import com.thoughtworks.rnr.saml.Configuration;
 import com.thoughtworks.rnr.saml.SAMLResponse;
 import com.thoughtworks.rnr.saml.SAMLValidator;
+import com.thoughtworks.rnr.saml.util.Clock;
 import org.apache.commons.codec.binary.Base64;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.ws.security.SecurityPolicyException;
@@ -10,6 +11,8 @@ import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.io.UnmarshallerFactory;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.opensaml.xml.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,15 +27,16 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.security.cert.CertificateException;
-
+@Component
 public class SAMLService2 {
-
-
     private final UnmarshallerFactory unmarshallerFactory;
     private final String loggedInKey = "okta.rnr.user";
     private final String loggedOutKey = "okta.rnr.logged_out_user";
     private SAMLValidator validator;
     private Configuration configuration;
+
+    @Autowired
+    private Clock timeProvider;
 
     public SAMLService2() throws IOException {
         try {
@@ -42,7 +46,7 @@ public class SAMLService2 {
         }
         try {
             String file = readFile("src/test/resources/config.xml");
-            validator = new SAMLValidator();
+            validator = new SAMLValidator(timeProvider);
             configuration = validator.getConfiguration(file);
         } catch (SecurityPolicyException e) {
             e.printStackTrace();
@@ -84,6 +88,6 @@ public class SAMLService2 {
 
     public SAMLResponse getSAMLResponse(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
         assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
-        return validator.getSAMLResponse(assertion, configuration);
+        return validator.getSAMLResponse(assertion, configuration, timeProvider);
     }
 }
