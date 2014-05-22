@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class NineFiftyFiveAMClock implements com.thoughtworks.rnr.saml.util.Clock {
 
     private String instant = "2014-05-20T09:56:00.000-05:00";
+
     /**
      * @return the instant set by setInstant()
      */
@@ -20,7 +21,7 @@ public class NineFiftyFiveAMClock implements com.thoughtworks.rnr.saml.util.Cloc
     }
 
     /**
-     * @return teh instant set by setInstant() as a DateTime object
+     * @return the instant set by setInstant() as a DateTime object
      */
     @Override
     public DateTime dateTimeNow() {

@@ -1,27 +1,29 @@
 package com.thoughtworks.rnr.service;
 
+
 import com.thoughtworks.rnr.factory.JSONObjectFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
+//https://developer.salesforce.com/page/Getting_Started_with_the_Force.com_REST_API#Using_the_Force.com_REST_API
+
+@Service
 public class SalesForceService {
 
     private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
@@ -31,13 +33,18 @@ public class SalesForceService {
     private static final String REDIRECT_URI = "http://localhost:8080/oauth/_callback";
     private static final String ENVIRONMENT = "https://test.salesforce.com";
     private static final String tokenUrl = ENVIRONMENT + "/services/oauth2/token";
-    private final JSONObjectFactory factory;
+    private final JSONObjectFactory jsonObjectFactory;
     private String authUrl = null;
-    private String email;
+    private String userEmail;
+    private static final String START_DATE_QUERY = "SELECT Contact.pse__Start_Date__c, " +
+            "(SELECT pse__Timecard_Header__c.pse__Total_Hours__c " +
+            "FROM Contact.pse__Timecards__r) " +
+            "FROM Contact " +
+            "WHERE Contact.Email = '";
 
-    public SalesForceService(String email, JSONObjectFactory factory) throws UnsupportedEncodingException {
-        this.email = email;
-        this.factory = factory;
+    @Autowired
+    public SalesForceService(JSONObjectFactory jsonObjectFactory) throws UnsupportedEncodingException {
+        this.jsonObjectFactory = jsonObjectFactory;
         authUrl = ENVIRONMENT
                 + "/services/oauth2/authorize?response_type=code&client_id="
                 + CLIENT_ID
@@ -52,44 +59,61 @@ public class SalesForceService {
         }
     }
 
-    public HttpResponse requestAccessTokenFromSalesForce(HttpServletRequest request, HttpClient httpClient) throws IOException {
+    public void buildAndSendPostRequest(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
         String code = request.getParameter("code");
-        HttpPost httpPost = new HttpPost(tokenUrl);
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        nvps.add(new BasicNameValuePair("code", code));
-        nvps.add(new BasicNameValuePair("grant_type", "authorization_code"));
-        nvps.add(new BasicNameValuePair("client_id", CLIENT_ID));
-        nvps.add(new BasicNameValuePair("client_secret", CLIENT_SECRET));
-        nvps.add(new BasicNameValuePair("redirect_uri", REDIRECT_URI));
-        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
-        return httpClient.execute(httpPost);
+        PostMethod httpPost = new PostMethod(tokenUrl);
+
+        httpPost.addParameter("code", code);
+        httpPost.addParameter("grant_type", "authorization_code");
+        httpPost.addParameter("client_id", CLIENT_ID);
+        httpPost.addParameter("client_secret", CLIENT_SECRET);
+        httpPost.addParameter("redirect_uri", REDIRECT_URI);
+
+        httpClient.executeMethod(httpPost);
+
+        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(httpPost.getResponseBodyAsStream())));
+        setAccessTokenAndInstanceURL(authResponse, request, httpClient);
     }
 
-    public HttpServletRequest setAccessTokenAndInstanceURL(JSONObject responseJSON, HttpServletRequest request) throws JSONException {
+    public void setAccessTokenAndInstanceURL(JSONObject responseJSON, HttpServletRequest request, HttpClient httpClient) throws JSONException {
         String accessToken = responseJSON.getString("access_token");
         String instanceURL = responseJSON.getString("instance_url");
         request.getSession().setAttribute(ACCESS_TOKEN, accessToken);
         request.getSession().setAttribute(INSTANCE_URL, instanceURL);
-        return request;
+
+        try {
+            queryThoughtWorksStartDate(httpClient, instanceURL, accessToken);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public String queryThoughtWorksStartDate(HttpClient httpClient, String instanceUrl, String accessToken) throws URISyntaxException, IOException, JSONException {
-        HttpGet get = new HttpGet(instanceUrl
-                + "/services/data/v29.0/query");
+        String query = START_DATE_QUERY + userEmail + "'";
 
-        get.setHeader("Authorization", "OAuth " + accessToken);
+        GetMethod get = new GetMethod(instanceUrl + "/services/data/v29.0/query");
+        get.setRequestHeader("Authorization", "OAuth " + accessToken);
+        NameValuePair[] params = new NameValuePair[1];
+        params[0] = new NameValuePair("q", query);
+        get.setQueryString(params);
 
-        URI uri = new URIBuilder(get.getURI()).addParameter("q",
-                "SELECT Contact.pse__Start_Date__c, " +
-                        "(SELECT pse__Timecard_Header__c.pse__Total_Hours__c " +
-                        "FROM Contact.pse__Timecards__r) " +
-                        "FROM Contact " +
-                        "WHERE Contact.Email = '" + email + "'"
-        ).build();
-        get.setURI(uri);
-        HttpResponse response = httpClient.execute(get);
-        JSONObject JSONResponse = factory.httpResponseToJSONObject(response);
-        JSONObject result = JSONResponse.getJSONArray("records").getJSONObject(0);
-        return (String) result.get("pse__Start_Date__c");
+        httpClient.executeMethod(get);
+        getStartDateFromJsonOb(get);
+        return "home";
+    }
+
+    private String getStartDateFromJsonOb(GetMethod get) throws JSONException, IOException {
+        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(get.getResponseBodyAsStream())));
+        JSONArray results = authResponse.getJSONArray("records");
+        return results.getJSONObject(0).getString("pse__Start_Date__c");
+
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }
+

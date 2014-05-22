@@ -17,7 +17,10 @@ import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -80,9 +83,13 @@ public class SAMLService {
         }
     }
 
-    private SAMLResponse decodeAndUnmarshall(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
+    public SAMLResponse decodeAndUnmarshall(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
         assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
         return validator.getSAMLResponse(assertion, configuration, timeProvider);
+    }
+
+    public String getUserIdFromSAMLString(String samlResponse) throws IOException, SecurityPolicyException, CertificateException, ParserConfigurationException, ValidationException, SAXException, UnmarshallingException {
+        return decodeAndUnmarshall(samlResponse).getUserID();
     }
 
     private Principal getUserFromSAMLResponse(final SAMLResponse samlResponse) throws UnmarshallingException, IOException, CertificateException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {

@@ -43,24 +43,24 @@ public class HomeController {
         this.samlService = samlService;
     }
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String doesNothing() {
         return "home";
     }
 
-    @RequestMapping(value="/home", method = RequestMethod.GET)
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String displayHome() {
 
         return "home";
     }
 
 
-    @RequestMapping(value = "/", params={"startDate", "rolloverdays", "accrualRate", "salesForceText", "endDate"}, method = RequestMethod.POST)
-    public ModelAndView postDate(@RequestParam("startDate")String startDate,
-                             @RequestParam("rolloverdays")String rollover,
-                             @RequestParam("accrualRate")String accrualRate,
-                             @RequestParam("salesForceText")String salesForceText,
-                             @RequestParam("endDate")String endDate) throws IOException, ParseException {
+    @RequestMapping(value = "/", params = {"startDate", "rolloverdays", "accrualRate", "salesForceText", "endDate"}, method = RequestMethod.POST)
+    public ModelAndView postDate(@RequestParam("startDate") String startDate,
+                                 @RequestParam("rolloverdays") String rollover,
+                                 @RequestParam("accrualRate") String accrualRate,
+                                 @RequestParam("salesForceText") String salesForceText,
+                                 @RequestParam("endDate") String endDate) throws IOException, ParseException {
 
         LocalDate convertedStartDate = dateParserService.parse(startDate);
         LocalDate convertedEndDate = dateParserService.parse(endDate);
@@ -93,7 +93,7 @@ public class HomeController {
         return new ModelAndView("home", "postedValues", model);
     }
 
-    private Double roundToNearestHundredth(Double number){
-        return (double) Math.round(number*100)/100;
+    private Double roundToNearestHundredth(Double number) {
+        return (double) Math.round(number * 100) / 100;
     }
 }
