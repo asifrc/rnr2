@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * An implementation of Clock for testing purposes
  */
 @Component
-public class NineFiftyFiveAMClock implements com.thoughtworks.rnr.saml.util.Clock {
+public class NineFiftyFiveAMClock implements Clock {
 
     private String instant = "2014-05-20T09:56:00.000-05:00";
 
