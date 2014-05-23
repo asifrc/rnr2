@@ -1,6 +1,7 @@
 package com.thoughtworks.rnr.service;
 
 import com.thoughtworks.rnr.factory.JSONObjectFactory;
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -29,7 +30,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class SalesForceServiceTest {
 
-
     private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
     private static final String INSTANCE_URL = "INSTANCE_URL";
     private static final String CLIENT_ID = "3MVG9Iu66FKeHhINkDZtpSFwPuzIarpL2Rs3AbfckOpkZhCvwKTdcDPUSkZUIESoKIrsbp9ugHPK3KqJXlA_R";
@@ -46,7 +46,7 @@ public class SalesForceServiceTest {
     @Mock
     HttpSession mockHttpSession;
     @Mock
-    org.apache.commons.httpclient.HttpClient mockHttpClient;
+    HttpClient mockHttpClient;
     @Mock
     HttpPost mockHttpPost;
     @Mock
