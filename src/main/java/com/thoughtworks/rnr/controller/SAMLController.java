@@ -34,13 +34,13 @@ public class SAMLController {
         try {
             String samlResponse = request.getParameter("SAMLResponse");
             samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
-            salesForceService.authenticateWithSalesForce(request, response);
-//            return "redirect:/home";
+//            salesForceService.authenticateWithSalesForce(request, response);
+            return "redirect:/home";
         }
         catch (IOException | UnmarshallingException | ValidationException | ParserConfigurationException | SAXException | SecurityPolicyException | CertificateException e) {
             return "sorry";
         }
-        return "sorry";
+//        return "sorry";
     }
 
 }

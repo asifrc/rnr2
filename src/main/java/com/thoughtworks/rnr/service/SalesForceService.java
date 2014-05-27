@@ -63,6 +63,7 @@ public class SalesForceService {
         if (accessToken == null) {
             response.sendRedirect(authUrl);
         }
+
     }
 
     public JSONObject queryForAuthResponse(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
@@ -128,6 +129,12 @@ public class SalesForceService {
             e.printStackTrace();
         }
         return targetFormat.format(date);
+    }
+
+    public String getStartDate(HttpServletRequest request, HttpClient client) throws IOException, JSONException, URISyntaxException {
+        JSONObject authResponse = queryForAuthResponse(request, client);
+        setAccessTokenAndInstanceURL(authResponse, request, client);
+        return queryThoughtWorksStartDate(client, request.getSession());
     }
 }
 

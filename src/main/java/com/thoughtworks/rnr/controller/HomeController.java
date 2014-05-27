@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
@@ -49,9 +51,11 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
-    public String displayHome() {
-
-        return "home";
+    public ModelAndView displayHome(HttpServletRequest request, ModelMap model) {
+        HttpSession session = request.getSession();
+        String startDate = (String) session.getAttribute("startDate");
+        model.addAttribute("startDate", startDate);
+        return new ModelAndView("home", "startDateModel", model);
     }
 
 

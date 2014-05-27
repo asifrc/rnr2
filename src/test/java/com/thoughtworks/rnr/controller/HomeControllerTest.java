@@ -9,7 +9,11 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -18,8 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -67,7 +70,15 @@ public class HomeControllerTest {
 
     @Test
     public void get_shouldReturnHomeView() {
-        assertThat(homeController.displayHome(), is("home"));
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpSession mockSession = mock(HttpSession.class);
+
+        when(mockRequest.getSession()).thenReturn(mockSession);
+        when(mockSession.getAttribute("startDate")).thenReturn("03/03/2014");
+
+        ModelAndView mav = homeController.displayHome(mockRequest, new ModelMap());
+
+        assertThat(mav.getViewName(), is("home"));
     }
 
     @Test

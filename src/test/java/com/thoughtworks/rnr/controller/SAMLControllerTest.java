@@ -54,13 +54,4 @@ public class SAMLControllerTest {
         verify(samlService).setSessionWhenSAMLResponseIsValid(httpServletRequest, "some response");
     }
 
-    @Test
-    public void shouldGetUserIDFromSAMLString() throws Exception {
-        when(httpServletRequest.getParameter("SAMLResponse")).thenReturn("SAML-STRING");
-        userId = "userId";
-        when(samlService.getUserIdFromSAMLString("SAML-STRING")).thenReturn(userId);
-        samlController.handleOKTACallback(httpServletRequest, httpServletResponse);
-        verify(samlService).getUserIdFromSAMLString("SAML-STRING");
-        verify(salesForceService).setUserEmail(userId);
-    }
 }

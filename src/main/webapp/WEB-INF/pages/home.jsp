@@ -16,7 +16,6 @@
     <script type="text/javascript" src="../../scripts/js/rnr.js"></script>
 </head>
 <body>
-<h1>${startDateModel.startDate}</h1>
 <div id="page">
     <div>
         <img class="header-img" src="/images/logo.png"/>
