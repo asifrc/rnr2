@@ -16,6 +16,7 @@
     <script type="text/javascript" src="../../scripts/js/rnr.js"></script>
 </head>
 <body>
+<h1>${startDateModel.startDate}</h1>
 <div id="page">
     <div>
         <img class="header-img" src="/images/logo.png"/>
@@ -27,8 +28,15 @@
                 <div>
                     <label class="field-label" id="label-for-start-date-picker" for="start-date-picker">Start
                         Date:</label>
-                    <input id="start-date-picker" class="banner" type="text" name="startDate"
-                           value="${postedValues.startDate}" readonly>
+                    <c:choose>
+                        <c:when test="${not empty postedValues.startDate}">
+                            <input id="start-date-picker" class="banner" type="text" name="startDate" value="${postedValues.startDate}" readonly>
+                        </c:when>
+
+                        <c:otherwise>
+                        <input id="start-date-picker" class="banner" type="text" name="startDate" value="${startDateModel.startDate}" readonly>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div>
                     <label class="field-label" id="label-for-rolloverdays-field" for="rolloverdays-field">Vacation

@@ -15,11 +15,17 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 //https://developer.salesforce.com/page/Getting_Started_with_the_Force.com_REST_API#Using_the_Force.com_REST_API
 
@@ -59,7 +65,7 @@ public class SalesForceService {
         }
     }
 
-    public void buildAndSendPostRequest(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
+    public JSONObject queryForAuthResponse(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
         String code = request.getParameter("code");
         PostMethod httpPost = new PostMethod(TOKEN_URL);
 
@@ -72,9 +78,7 @@ public class SalesForceService {
         httpClient.executeMethod(httpPost);
 
         JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(httpPost.getResponseBodyAsStream())));
-
-
-        setAccessTokenAndInstanceURL(authResponse, request, httpClient);
+        return authResponse;
     }
 
     public void setAccessTokenAndInstanceURL(JSONObject authResponse, HttpServletRequest request, HttpClient httpClient) throws JSONException {
@@ -82,23 +86,15 @@ public class SalesForceService {
         String instanceURL = authResponse.getString("instance_url");
         request.getSession().setAttribute(ACCESS_TOKEN, accessToken);
         request.getSession().setAttribute(INSTANCE_URL, instanceURL);
-
-        try {
-            queryThoughtWorksStartDate(httpClient, instanceURL, accessToken);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
-    public void queryThoughtWorksStartDate(HttpClient httpClient, String instanceUrl, String accessToken) throws URISyntaxException, IOException, JSONException {
-        String query = START_DATE_QUERY + userEmail + "'";
-
+    public String queryThoughtWorksStartDate(HttpClient httpClient, HttpSession session) throws URISyntaxException, IOException, JSONException {
+        String instanceUrl = (String) session.getAttribute(INSTANCE_URL);
         GetMethod get = new GetMethod(instanceUrl + "/services/data/v29.0/query");
+        String accessToken = (String) session.getAttribute(ACCESS_TOKEN);
         get.setRequestHeader("Authorization", "OAuth " + accessToken);
         NameValuePair[] params = new NameValuePair[1];
+
         params[0] = new NameValuePair("q", "SELECT pse__Start_Date__c from Contact WHERE Name = 'Michael Lennon'");
 
         get.setQueryString(params);
@@ -107,7 +103,8 @@ public class SalesForceService {
 
         JSONObject jsonObject = new JSONObject(new JSONTokener(new InputStreamReader(get.getResponseBodyAsStream())));
         String startDate = getStartDateFromJsonOb(jsonObject);
-        System.out.println(startDate);
+
+        return formatDate(startDate);
     }
 
     private String getStartDateFromJsonOb(JSONObject jsonObject) throws JSONException, IOException {
@@ -118,6 +115,19 @@ public class SalesForceService {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    private String formatDate(String startDate) {
+        DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        DateFormat targetFormat = new SimpleDateFormat("MM/dd/yyyy");
+        Date date = null;
+
+        try {
+            date = originalFormat.parse(startDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return targetFormat.format(date);
     }
 }
 

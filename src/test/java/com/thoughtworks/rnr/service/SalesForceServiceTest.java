@@ -82,7 +82,7 @@ public class SalesForceServiceTest {
     public void requestAccessTokenFromSalesForce_shouldPOSTWithNameValuePairsAndReturnHttpResponse() throws Exception {
 //        when(mockHttpServletRequest.getParameter("code")).thenReturn("fake code");
 //        when(mockHttpClient.execute(any(HttpPost.class))).thenReturn(mock(HttpResponse.class));
-//        HttpResponse response = salesForceService.buildAndSendPostRequest(mockHttpServletRequest, mockHttpClient);
+//        HttpResponse response = salesForceService.queryForAuthResponse(mockHttpServletRequest, mockHttpClient);
 //        ArgumentCaptor<HttpPost> httpPostCaptor = ArgumentCaptor.forClass(HttpPost.class);
 //        verify(mockHttpClient).execute(httpPostCaptor.capture());
 //        String capturedEncodedURL = IOUtils.toString(httpPostCaptor.getValue().getEntity().getContent());
