@@ -36,12 +36,13 @@ public class SAMLController {
             samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
             String userID = samlService.getUserIdFromSAMLString(samlResponse);
             salesForceService.setUserEmail(userID);
-//        salesForceService.authenticateWithSalesForce(request, response);
+//            salesForceService.authenticateWithSalesForce(request, response);
             return "redirect:/home";
         }
         catch (IOException | UnmarshallingException | ValidationException | ParserConfigurationException | SAXException | SecurityPolicyException | CertificateException e) {
             return "sorry";
         }
+//        return "sorry";
     }
 
 }

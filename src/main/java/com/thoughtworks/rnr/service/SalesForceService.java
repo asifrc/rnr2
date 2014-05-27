@@ -32,7 +32,7 @@ public class SalesForceService {
     private static final String CLIENT_SECRET = "4233795443642531062";
     private static final String REDIRECT_URI = "http://localhost:8080/oauth/_callback";
     private static final String ENVIRONMENT = "https://test.salesforce.com";
-    private static final String tokenUrl = ENVIRONMENT + "/services/oauth2/token";
+    private static final String TOKEN_URL = ENVIRONMENT + "/services/oauth2/token";
     private final JSONObjectFactory jsonObjectFactory;
     private String authUrl = null;
     private String userEmail;
@@ -61,7 +61,7 @@ public class SalesForceService {
 
     public void buildAndSendPostRequest(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
         String code = request.getParameter("code");
-        PostMethod httpPost = new PostMethod(tokenUrl);
+        PostMethod httpPost = new PostMethod(TOKEN_URL);
 
         httpPost.addParameter("code", code);
         httpPost.addParameter("grant_type", "authorization_code");
@@ -72,12 +72,14 @@ public class SalesForceService {
         httpClient.executeMethod(httpPost);
 
         JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(httpPost.getResponseBodyAsStream())));
+
+
         setAccessTokenAndInstanceURL(authResponse, request, httpClient);
     }
 
-    public void setAccessTokenAndInstanceURL(JSONObject responseJSON, HttpServletRequest request, HttpClient httpClient) throws JSONException {
-        String accessToken = responseJSON.getString("access_token");
-        String instanceURL = responseJSON.getString("instance_url");
+    public void setAccessTokenAndInstanceURL(JSONObject authResponse, HttpServletRequest request, HttpClient httpClient) throws JSONException {
+        String accessToken = authResponse.getString("access_token");
+        String instanceURL = authResponse.getString("instance_url");
         request.getSession().setAttribute(ACCESS_TOKEN, accessToken);
         request.getSession().setAttribute(INSTANCE_URL, instanceURL);
 
@@ -91,23 +93,25 @@ public class SalesForceService {
 
     }
 
-    public String queryThoughtWorksStartDate(HttpClient httpClient, String instanceUrl, String accessToken) throws URISyntaxException, IOException, JSONException {
+    public void queryThoughtWorksStartDate(HttpClient httpClient, String instanceUrl, String accessToken) throws URISyntaxException, IOException, JSONException {
         String query = START_DATE_QUERY + userEmail + "'";
 
         GetMethod get = new GetMethod(instanceUrl + "/services/data/v29.0/query");
         get.setRequestHeader("Authorization", "OAuth " + accessToken);
         NameValuePair[] params = new NameValuePair[1];
-        params[0] = new NameValuePair("q", query);
+        params[0] = new NameValuePair("q", "SELECT pse__Start_Date__c from Contact WHERE Name = 'Michael Lennon'");
+
         get.setQueryString(params);
 
         httpClient.executeMethod(get);
-        getStartDateFromJsonOb(get);
-        return "home";
+
+        JSONObject jsonObject = new JSONObject(new JSONTokener(new InputStreamReader(get.getResponseBodyAsStream())));
+        String startDate = getStartDateFromJsonOb(jsonObject);
+        System.out.println(startDate);
     }
 
-    private String getStartDateFromJsonOb(GetMethod get) throws JSONException, IOException {
-        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(get.getResponseBodyAsStream())));
-        JSONArray results = authResponse.getJSONArray("records");
+    private String getStartDateFromJsonOb(JSONObject jsonObject) throws JSONException, IOException {
+        JSONArray results = jsonObject.getJSONArray("records");
         return results.getJSONObject(0).getString("pse__Start_Date__c");
 
     }
