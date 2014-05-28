@@ -66,7 +66,7 @@ public class SalesForceService {
     private JSONObject requestAuthResponseFromSalesForce(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
         PostMethod postMethod = buildHttpPostMethod(request);
         httpClient.executeMethod(postMethod);
-        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(postMethod.getResponseBodyAsStream())));
+        JSONObject authResponse = parseHttpResponseIntoJSON(postMethod);
         return authResponse;
     }
 
@@ -98,7 +98,7 @@ public class SalesForceService {
     }
 
     private GetMethod setupHttpGetMethod(HttpSession session) {
-        GetMethod getMethod = new GetMethod((String) session.getAttribute(INSTANCE_URL) + "/services/data/v29.0/query");
+        GetMethod getMethod = new GetMethod(session.getAttribute(INSTANCE_URL) + "/services/data/v29.0/query");
         String accessToken = (String) session.getAttribute(ACCESS_TOKEN);
         getMethod.setRequestHeader("Authorization", "OAuth " + accessToken);
         NameValuePair[] params = createQueryString();
@@ -106,6 +106,9 @@ public class SalesForceService {
         return getMethod;
     }
 
+    private JSONObject parseHttpResponseIntoJSON(PostMethod postMethod) throws JSONException, IOException {
+        return new JSONObject(new JSONTokener(new InputStreamReader(postMethod.getResponseBodyAsStream())));
+    }
     private JSONObject parseHttpResponseIntoJSON(GetMethod getMethod) throws JSONException, IOException {
         return new JSONObject(new JSONTokener(new InputStreamReader(getMethod.getResponseBodyAsStream())));
     }
@@ -119,7 +122,6 @@ public class SalesForceService {
     private String getStartDateFromJSON(JSONObject jsonObject) throws JSONException, IOException {
         JSONArray results = jsonObject.getJSONArray("records");
         return results.getJSONObject(0).getString("pse__Start_Date__c");
-
     }
 
     private String formatDate(String startDate) {

@@ -32,6 +32,7 @@ public class SalesForceController {
         } catch (IOException | URISyntaxException e) {
             LOGGER.debug("Inside callback GET request from SalesForce: /oauth/_callback");
         }
+
         return "redirect:/home";
     }
 
