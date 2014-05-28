@@ -30,17 +30,16 @@ public class SAMLController {
     }
 
     @RequestMapping(value = "/auth/saml/callback", method = RequestMethod.POST)
-    public String handleOKTACallback(HttpServletRequest request, HttpServletResponse response) throws IOException, UnmarshallingException, ValidationException, ParserConfigurationException, SAXException, SecurityPolicyException, CertificateException {
+    public String handleOKTACallback(HttpServletRequest request, HttpServletResponse response) {
         try {
             String samlResponse = request.getParameter("SAMLResponse");
             samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
-//            salesForceService.authenticateWithSalesForce(request, response);
-            return "redirect:/home";
+            salesForceService.authenticateWithSalesForce(request, response);
+            return null;
         }
         catch (IOException | UnmarshallingException | ValidationException | ParserConfigurationException | SAXException | SecurityPolicyException | CertificateException e) {
             return "sorry";
         }
-//        return "sorry";
+        return "sorry";
     }
-
 }

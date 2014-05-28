@@ -42,7 +42,9 @@ public class SalesForceService {
     private final JSONObjectFactory jsonObjectFactory;
     private String authUrl = null;
     private String userEmail;
-    private static final String START_DATE_QUERY = "SELECT Contact.pse__Start_Date__c, " +
+    private static final String START_DATE_QUERY = "SELECT pse__Start_Date__c from Contact WHERE email = ";
+
+    private static final String OLD_QUERY_FOR_REFERENCE_ONLY = "SELECT Contact.pse__Start_Date__c, " +
             "(SELECT pse__Timecard_Header__c.pse__Total_Hours__c " +
             "FROM Contact.pse__Timecards__r) " +
             "FROM Contact " +
@@ -63,7 +65,6 @@ public class SalesForceService {
         if (accessToken == null) {
             response.sendRedirect(authUrl);
         }
-
     }
 
     public JSONObject queryForAuthResponse(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
@@ -96,7 +97,7 @@ public class SalesForceService {
         get.setRequestHeader("Authorization", "OAuth " + accessToken);
         NameValuePair[] params = new NameValuePair[1];
 
-        params[0] = new NameValuePair("q", "SELECT pse__Start_Date__c from Contact WHERE Name = 'Michael Lennon'");
+        params[0] = new NameValuePair("q", START_DATE_QUERY + "'" + userEmail + "'");
 
         get.setQueryString(params);
 

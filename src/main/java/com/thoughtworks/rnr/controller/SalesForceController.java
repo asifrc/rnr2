@@ -35,7 +35,6 @@ public class SalesForceController {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-
         return "redirect:/home";
     }
 

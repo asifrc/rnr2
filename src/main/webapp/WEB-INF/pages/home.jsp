@@ -33,7 +33,7 @@
                         </c:when>
 
                         <c:otherwise>
-                        <input id="start-date-picker" class="banner" type="text" name="startDate" value="${startDateModel.startDate}" readonly>
+                            <input id="start-date-picker" class="banner" type="text" name="startDate" value="${startDateModel.startDate}" readonly>
                         </c:otherwise>
                     </c:choose>
                 </div>
