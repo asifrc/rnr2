@@ -37,14 +37,14 @@ public class SalesForceControllerTest {
 
         salesForceController.handleSalesForceCallback(mockRequest, mockClient);
 
-        verify(mockSalesForceService).getStartDate(mockRequest, mockClient);
+        verify(mockSalesForceService).fetchStartDate(mockRequest, mockClient);
     }
 
     @Test
     public void shouldSetStartDateAsAttributeOnSession() throws JSONException, IOException, URISyntaxException {
         when(mockRequest.getSession()).thenReturn(mockHttpSession);
         String startDate = "01/01/2014";
-        when(mockSalesForceService.getStartDate(mockRequest, mockClient)).thenReturn(startDate);
+        when(mockSalesForceService.fetchStartDate(mockRequest, mockClient)).thenReturn(startDate);
 
         salesForceController.handleSalesForceCallback(mockRequest, mockClient);
 

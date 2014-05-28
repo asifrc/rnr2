@@ -36,7 +36,7 @@ public class SalesForceController {
     }
 
     private void setStartDateInSession(HttpServletRequest request, HttpClient client) throws IOException, JSONException, URISyntaxException {
-        String startDate = salesForceService.getStartDate(request, client);
+        String startDate = salesForceService.fetchStartDate(request, client);
         request.getSession().setAttribute("startDate", startDate);
     }
 }

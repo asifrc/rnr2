@@ -58,58 +58,69 @@ public class SalesForceService {
         }
     }
 
-    public JSONObject queryForAuthResponse(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
+    public String fetchStartDate(HttpServletRequest request, HttpClient client) throws IOException, JSONException, URISyntaxException {
+        JSONObject authResponse = requestAuthResponseFromSalesForce(request, client);
+        setAccessTokenAndInstanceURLInSession(authResponse, request);
+        return queryThoughtWorksStartDate(client, request.getSession());
+    }
+
+    private JSONObject requestAuthResponseFromSalesForce(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
+        PostMethod httpPost = buildHttpPost(request);
+        httpClient.executeMethod(httpPost);
+        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(httpPost.getResponseBodyAsStream())));
+        return authResponse;
+    }
+
+    private PostMethod buildHttpPost(HttpServletRequest request) {
         PostMethod httpPost = new PostMethod(TOKEN_URL);
         httpPost.addParameter("code", request.getParameter("code"));
         httpPost.addParameter("grant_type", "authorization_code");
         httpPost.addParameter("client_id", CLIENT_ID);
         httpPost.addParameter("client_secret", CLIENT_SECRET);
         httpPost.addParameter("redirect_uri", REDIRECT_URI);
-
-        httpClient.executeMethod(httpPost);
-
-        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(httpPost.getResponseBodyAsStream())));
-        return authResponse;
+        return httpPost;
     }
 
-    public void setAccessTokenAndInstanceURL(JSONObject authResponse, HttpServletRequest request) throws JSONException {
+    private void setAccessTokenAndInstanceURLInSession(JSONObject authResponse, HttpServletRequest request) throws JSONException {
         String accessToken = authResponse.getString("access_token");
         String instanceURL = authResponse.getString("instance_url");
         request.getSession().setAttribute(ACCESS_TOKEN, accessToken);
         request.getSession().setAttribute(INSTANCE_URL, instanceURL);
     }
 
-    public String queryThoughtWorksStartDate(HttpClient httpClient, HttpSession session) throws URISyntaxException, IOException, JSONException {
-        String instanceUrl = (String) session.getAttribute(INSTANCE_URL);
-        GetMethod httpGet = new GetMethod(instanceUrl + "/services/data/v29.0/query");
-        String accessToken = (String) session.getAttribute(ACCESS_TOKEN);
-        httpGet.setRequestHeader("Authorization", "OAuth " + accessToken);
-        NameValuePair[] params = new NameValuePair[1];
-
-        params[0] = new NameValuePair("q", START_DATE_QUERY + "'" + userEmail + "'");
-
-        httpGet.setQueryString(params);
+    private String queryThoughtWorksStartDate(HttpClient httpClient, HttpSession session) throws URISyntaxException, IOException, JSONException {
+        GetMethod httpGet = setupHttpGetMethod(session);
 
         httpClient.executeMethod(httpGet);
 
-        JSONObject jsonObject = new JSONObject(new JSONTokener(new InputStreamReader(httpGet.getResponseBodyAsStream())));
-        String startDate = getStartDateFromJsonOb(jsonObject);
-
+        JSONObject jsonObject = parseHttpResponseIntoJSON(httpGet);
+        String startDate = getStartDateFromJSON(jsonObject);
         return formatDate(startDate);
     }
 
-    private String getStartDateFromJsonOb(JSONObject jsonObject) throws JSONException, IOException {
-        System.out.println(userEmail);
-        System.out.println(userEmail);
-        System.out.println(userEmail);
-        System.out.println(userEmail);
+    private GetMethod setupHttpGetMethod(HttpSession session) {
+        GetMethod httpGet = new GetMethod((String) session.getAttribute(INSTANCE_URL) + "/services/data/v29.0/query");
+        String accessToken = (String) session.getAttribute(ACCESS_TOKEN);
+        httpGet.setRequestHeader("Authorization", "OAuth " + accessToken);
+        NameValuePair[] params = createQueryString();
+        httpGet.setQueryString(params);
+        return httpGet;
+    }
+
+    private JSONObject parseHttpResponseIntoJSON(GetMethod httpGet) throws JSONException, IOException {
+        return new JSONObject(new JSONTokener(new InputStreamReader(httpGet.getResponseBodyAsStream())));
+    }
+
+    private NameValuePair[] createQueryString() {
+        NameValuePair[] params = new NameValuePair[1];
+        params[0] = new NameValuePair("q", START_DATE_QUERY + "'" + userEmail + "'");
+        return params;
+    }
+
+    private String getStartDateFromJSON(JSONObject jsonObject) throws JSONException, IOException {
         JSONArray results = jsonObject.getJSONArray("records");
         return results.getJSONObject(0).getString("pse__Start_Date__c");
 
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
     }
 
     private String formatDate(String startDate) {
@@ -125,9 +136,7 @@ public class SalesForceService {
         return targetFormat.format(date);
     }
 
-    public String getStartDate(HttpServletRequest request, HttpClient client) throws IOException, JSONException, URISyntaxException {
-        JSONObject authResponse = queryForAuthResponse(request, client);
-        setAccessTokenAndInstanceURL(authResponse, request);
-        return queryThoughtWorksStartDate(client, request.getSession());
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }

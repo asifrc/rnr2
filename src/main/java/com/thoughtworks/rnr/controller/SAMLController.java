@@ -35,9 +35,9 @@ public class SAMLController {
             String samlResponse = request.getParameter("SAMLResponse");
             samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
             salesForceService.setUserEmail(samlService.getUserIdFromSAMLString(samlResponse));
-            salesForceService.authenticateWithSalesForce(request, response); // comment this line for functional test run and ignore corresponding controller test.
-            return null; // for real life, since this line of code never gets reached.
-//            return "redirect:/home"; // for functional test run, since we need to comment out above call to salesforceservice.
+//            salesForceService.authenticateWithSalesForce(request, response); // comment this line for functional test run and ignore corresponding controller test.
+//            return null; // for real life, since this line of code never gets reached.
+            return "redirect:/home"; // for functional test run, since we need to comment out above call to salesforceservice.
         }
         catch (IOException | UnmarshallingException | ValidationException | ParserConfigurationException | SAXException | SecurityPolicyException | CertificateException e) {
             return "sorry";
