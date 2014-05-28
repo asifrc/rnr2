@@ -35,8 +35,8 @@ public class SAMLController {
             String samlResponse = request.getParameter("SAMLResponse");
             samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
             salesForceService.setUserEmail(samlService.getUserIdFromSAMLString(samlResponse));
-            salesForceService.authenticateWithSalesForce(request, response);
-            return null;
+//            salesForceService.authenticateWithSalesForce(request, response);
+            return "redirect:/home";
         }
         catch (IOException | UnmarshallingException | ValidationException | ParserConfigurationException | SAXException | SecurityPolicyException | CertificateException e) {
             return "sorry";

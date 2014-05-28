@@ -26,7 +26,7 @@ public class SalesForceController {
     }
 
     @RequestMapping(value = "/oauth/_callback", method = RequestMethod.GET)
-    public String sendPostRequestToSalesForceRequestingAccessToken(HttpServletRequest request, HttpClient client) throws JSONException {
+    public String handleSalesForceCallback(HttpServletRequest request, HttpClient client) throws JSONException {
         try {
             setStartDateInSession(request, client);
         } catch (IOException | URISyntaxException e) {
