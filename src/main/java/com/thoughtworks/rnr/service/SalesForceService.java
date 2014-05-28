@@ -36,7 +36,6 @@ public class SalesForceService {
     private static final String TOKEN_URL = ENVIRONMENT + "/services/oauth2/token";
     private static final String START_DATE_QUERY = "SELECT pse__Start_Date__c from Contact WHERE email = ";
     private String authUrl;
-    private String userEmail;
 
     private static final String OLD_QUERY_FOR_REFERENCE_ONLY = "SELECT Contact.pse__Start_Date__c, " +
             "(SELECT pse__Timecard_Header__c.pse__Total_Hours__c " +
@@ -101,7 +100,7 @@ public class SalesForceService {
         GetMethod getMethod = new GetMethod(session.getAttribute(INSTANCE_URL) + "/services/data/v29.0/query");
         String accessToken = (String) session.getAttribute(ACCESS_TOKEN);
         getMethod.setRequestHeader("Authorization", "OAuth " + accessToken);
-        NameValuePair[] params = createQueryString();
+        NameValuePair[] params = createQueryString(session);
         getMethod.setQueryString(params);
         return getMethod;
     }
@@ -109,12 +108,14 @@ public class SalesForceService {
     private JSONObject parseHttpResponseIntoJSON(PostMethod postMethod) throws JSONException, IOException {
         return new JSONObject(new JSONTokener(new InputStreamReader(postMethod.getResponseBodyAsStream())));
     }
+
     private JSONObject parseHttpResponseIntoJSON(GetMethod getMethod) throws JSONException, IOException {
         return new JSONObject(new JSONTokener(new InputStreamReader(getMethod.getResponseBodyAsStream())));
     }
 
-    private NameValuePair[] createQueryString() {
+    private NameValuePair[] createQueryString(HttpSession session) {
         NameValuePair[] params = new NameValuePair[1];
+        String userEmail = (String) (session.getAttribute("UserEmail"));
         params[0] = new NameValuePair("q", START_DATE_QUERY + "'" + userEmail + "'");
         return params;
     }
@@ -135,9 +136,5 @@ public class SalesForceService {
             e.printStackTrace();
         }
         return targetFormat.format(date);
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
     }
 }

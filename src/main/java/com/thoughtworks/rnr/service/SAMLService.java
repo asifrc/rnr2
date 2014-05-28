@@ -52,10 +52,6 @@ public class SAMLService {
         putUserInSession(request, user);
     }
 
-    public String getUserIdFromSAMLString(String samlResponse) throws IOException, SecurityPolicyException, CertificateException, ParserConfigurationException, ValidationException, SAXException, UnmarshallingException {
-        return decodeAndUnmarshall(samlResponse).getUserID();
-    }
-
     private void bootstrapOpenSAMLLibrary() {
         try {
             DefaultBootstrap.bootstrap();
@@ -91,6 +87,7 @@ public class SAMLService {
         final HttpSession httpSession = request.getSession();
         httpSession.setAttribute(LOGGED_IN_KEY, user);
         httpSession.setAttribute(LOGGED_OUT_KEY, null);
+        httpSession.setAttribute("UserEmail", user.getName());
     }
 
     private String readFile(String path) throws IOException {

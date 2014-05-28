@@ -51,18 +51,6 @@ public class SAMLControllerTest {
         verify(mockSamlService).setSessionWhenSAMLResponseIsValid(mockRequest, "some response");
     }
 
-    @Test
-    public void shouldSetUserEmailOnSalesForceService() throws CertificateException, UnmarshallingException, IOException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
-        String userEmail = "Some email";
-        when(mockRequest.getParameter("SAMLResponse")).thenReturn("some response");
-        when(mockSamlService.getUserIdFromSAMLString("some response")).thenReturn(userEmail);
-
-        samlController.handleOKTACallback(mockRequest, mockResponse);
-
-        verify(mockSamlService).getUserIdFromSAMLString("some response");
-        verify(mockSalesForceService).setUserEmail(userEmail);
-    }
-
     @Ignore("Need to ignore due to commenting line out in SAMLController for Functional test run")
     @Test
     public void shouldAuthenticateWithSalesForce() throws IOException {
