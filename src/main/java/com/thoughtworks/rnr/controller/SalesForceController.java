@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 @Controller
 public class SalesForceController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SalesForceController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceController.class);
     private SalesForceService salesForceService;
 
     @Autowired
@@ -27,13 +26,11 @@ public class SalesForceController {
     }
 
     @RequestMapping(value = "/oauth/_callback", method = RequestMethod.GET)
-    public String sendPostRequestToSalesForceRequestingAccessToken(HttpServletRequest request, HttpClient client, HttpServletResponse response) throws JSONException {
+    public String sendPostRequestToSalesForceRequestingAccessToken(HttpServletRequest request, HttpClient client) throws JSONException {
         try {
             setStartDateInSession(request, client);
-        } catch (IOException e) {
-            logger.debug("inside");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.debug("Inside callback GET request from SalesForce: /oauth/_callback");
         }
         return "redirect:/home";
     }
@@ -42,5 +39,4 @@ public class SalesForceController {
         String startDate = salesForceService.getStartDate(request, client);
         request.getSession().setAttribute("startDate", startDate);
     }
-
 }

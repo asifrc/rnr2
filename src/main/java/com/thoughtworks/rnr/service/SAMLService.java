@@ -53,6 +53,10 @@ public class SAMLService {
         putUserInSession(request, user);
     }
 
+    public String getUserIdFromSAMLString(String samlResponse) throws IOException, SecurityPolicyException, CertificateException, ParserConfigurationException, ValidationException, SAXException, UnmarshallingException {
+        return decodeAndUnmarshall(samlResponse).getUserID();
+    }
+
     private void bootstrapOpenSAMLLibrary() {
         try {
             DefaultBootstrap.bootstrap();
@@ -83,13 +87,9 @@ public class SAMLService {
         }
     }
 
-    public SAMLResponse decodeAndUnmarshall(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
+    private SAMLResponse decodeAndUnmarshall(String assertion) throws UnsupportedEncodingException, SecurityPolicyException {
         assertion = new String(Base64.decodeBase64(assertion.getBytes("UTF-8")), Charset.forName("UTF-8"));
         return validator.getSAMLResponse(assertion, configuration, timeProvider);
-    }
-
-    public String getUserIdFromSAMLString(String samlResponse) throws IOException, SecurityPolicyException, CertificateException, ParserConfigurationException, ValidationException, SAXException, UnmarshallingException {
-        return decodeAndUnmarshall(samlResponse).getUserID();
     }
 
     private Principal getUserFromSAMLResponse(final SAMLResponse samlResponse) throws UnmarshallingException, IOException, CertificateException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
