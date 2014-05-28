@@ -153,7 +153,7 @@ public class SAMLResponse {
     /**
      * @return Assertion > Subject > NameID
      */
-    public String getUserID() {
+    public String getUserEmail() {
         return assertion.getSubject().getNameID().getValue();
     }
 

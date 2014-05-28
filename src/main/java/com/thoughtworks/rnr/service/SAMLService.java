@@ -78,7 +78,7 @@ public class SAMLService {
     private Principal getUserFromSAMLResponse(final SAMLResponse samlResponse) throws UnmarshallingException, IOException, CertificateException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
         return new Principal() {
             public String getName() {
-                return samlResponse.getUserID();
+                return samlResponse.getUserEmail();
             }
         };
     }

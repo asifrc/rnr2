@@ -1,6 +1,5 @@
 package com.thoughtworks.rnr.saml;
 
-import com.thoughtworks.rnr.saml.util.Clock;
 import com.thoughtworks.rnr.saml.util.SimpleClock;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.ws.security.SecurityPolicyException;
@@ -31,7 +30,6 @@ public class SAMLResponseTest {
     private static final long ISSUE_INSTANT = 1354063117933L;
 
     private Configuration configuration;
-    private Clock clock;
 
     static {
         Map<String, List<String>> attributes = new HashMap<String, List<String>>();
@@ -58,7 +56,6 @@ public class SAMLResponseTest {
 
         MockClock mockClock = new MockClock();
         mockClock.setInstant("2012-11-28T00:38:37.895Z");
-        clock = mockClock;
     }
 
     @Test
@@ -77,7 +74,7 @@ public class SAMLResponseTest {
         assertEquals(response.getAudience(), AUDIENCE);
         assertEquals(response.getRecipient(), RECIPIENT);
         assertEquals(response.getIssuer(), ISSUER);
-        assertEquals(response.getUserID(), USER_ID);
+        assertEquals(response.getUserEmail(), USER_ID);
         assertEquals(response.getAttributes(), ATTRIBUTES);
         assertEquals(response.getIssueInstant().getTime(), ISSUE_INSTANT);
     }
