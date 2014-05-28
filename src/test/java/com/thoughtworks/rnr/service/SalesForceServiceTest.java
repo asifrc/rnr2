@@ -66,7 +66,7 @@ public class SalesForceServiceTest {
                 + CLIENT_ID
                 + "&redirect_uri="
                 + URLEncoder.encode(REDIRECT_URI, "UTF-8");
-        salesForceService = new SalesForceService(mockJSONObjectFactory);
+        salesForceService = new SalesForceService();
     }
 
     @Test
@@ -96,7 +96,7 @@ public class SalesForceServiceTest {
         when(mockJSONObject.getString("access_token")).thenReturn("fake token");
         when(mockJSONObject.getString("instance_url")).thenReturn("fake instance url");
         when(mockHttpServletRequest.getSession()).thenReturn(mockHttpSession);
-        salesForceService.setAccessTokenAndInstanceURL(mockJSONObject, mockHttpServletRequest, mockHttpClient);
+        salesForceService.setAccessTokenAndInstanceURL(mockJSONObject, mockHttpServletRequest);
         verify(mockHttpSession).setAttribute(ACCESS_TOKEN, "fake token");
         verify(mockHttpSession).setAttribute(INSTANCE_URL, "fake instance url");
     }

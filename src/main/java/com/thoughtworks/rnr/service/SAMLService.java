@@ -34,7 +34,6 @@ public class SAMLService {
     private final String CONFIG_FILE_PATH = "src/main/java/com/thoughtworks/rnr/config.xml";
 
     private SAMLValidator validator;
-    private String file;
     private Configuration configuration;
 
     // Autowired bean in dispatcher servlet, used for testing purposes.
@@ -66,24 +65,12 @@ public class SAMLService {
     }
 
     private void setUpValidatorAndConfiguration() throws IOException {
-        file = readFile(CONFIG_FILE_PATH);
+        String file = readFile(CONFIG_FILE_PATH);
         try {
             validator = new SAMLValidator(timeProvider);
             configuration = validator.getConfiguration(file);
         } catch (SecurityPolicyException e) {
             e.printStackTrace();
-        }
-    }
-
-    private String readFile(String path) throws IOException {
-        FileInputStream stream = new FileInputStream(new File(path));
-        try {
-            FileChannel fc = stream.getChannel();
-            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            return Charset.forName("UTF-8").decode(bb).toString();
-        }
-        finally {
-            stream.close();
         }
     }
 
@@ -93,17 +80,24 @@ public class SAMLService {
     }
 
     private Principal getUserFromSAMLResponse(final SAMLResponse samlResponse) throws UnmarshallingException, IOException, CertificateException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
-        Principal user =  new Principal() {
+        return new Principal() {
             public String getName() {
                 return samlResponse.getUserID();
             }
         };
-        return user;
     }
 
     private void putUserInSession(HttpServletRequest request, Principal user) {
         final HttpSession httpSession = request.getSession();
         httpSession.setAttribute(LOGGED_IN_KEY, user);
         httpSession.setAttribute(LOGGED_OUT_KEY, null);
+    }
+
+    private String readFile(String path) throws IOException {
+        try (FileInputStream stream = new FileInputStream(new File(path))) {
+            FileChannel fc = stream.getChannel();
+            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            return Charset.forName("UTF-8").decode(bb).toString();
+        }
     }
 }

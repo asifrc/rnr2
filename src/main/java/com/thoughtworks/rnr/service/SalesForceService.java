@@ -1,7 +1,6 @@
 package com.thoughtworks.rnr.service;
 
 
-import com.thoughtworks.rnr.factory.JSONObjectFactory;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -31,7 +30,6 @@ import java.util.Locale;
 
 @Service
 public class SalesForceService {
-
     private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
     private static final String INSTANCE_URL = "INSTANCE_URL";
     private static final String CLIENT_ID = "3MVG9Iu66FKeHhINkDZtpSFwPuzIarpL2Rs3AbfckOpkZhCvwKTdcDPUSkZUIESoKIrsbp9ugHPK3KqJXlA_R";
@@ -39,10 +37,9 @@ public class SalesForceService {
     private static final String REDIRECT_URI = "http://localhost:8080/oauth/_callback";
     private static final String ENVIRONMENT = "https://test.salesforce.com";
     private static final String TOKEN_URL = ENVIRONMENT + "/services/oauth2/token";
-    private final JSONObjectFactory jsonObjectFactory;
+    private static final String START_DATE_QUERY = "SELECT pse__Start_Date__c from Contact WHERE email = ";
     private String authUrl = null;
     private String userEmail;
-    private static final String START_DATE_QUERY = "SELECT pse__Start_Date__c from Contact WHERE email = ";
 
     private static final String OLD_QUERY_FOR_REFERENCE_ONLY = "SELECT Contact.pse__Start_Date__c, " +
             "(SELECT pse__Timecard_Header__c.pse__Total_Hours__c " +
@@ -51,8 +48,7 @@ public class SalesForceService {
             "WHERE Contact.Email = '";
 
     @Autowired
-    public SalesForceService(JSONObjectFactory jsonObjectFactory) throws UnsupportedEncodingException {
-        this.jsonObjectFactory = jsonObjectFactory;
+    public SalesForceService() throws UnsupportedEncodingException {
         authUrl = ENVIRONMENT
                 + "/services/oauth2/authorize?response_type=code&client_id="
                 + CLIENT_ID
@@ -83,7 +79,7 @@ public class SalesForceService {
         return authResponse;
     }
 
-    public void setAccessTokenAndInstanceURL(JSONObject authResponse, HttpServletRequest request, HttpClient httpClient) throws JSONException {
+    public void setAccessTokenAndInstanceURL(JSONObject authResponse, HttpServletRequest request) throws JSONException {
         String accessToken = authResponse.getString("access_token");
         String instanceURL = authResponse.getString("instance_url");
         request.getSession().setAttribute(ACCESS_TOKEN, accessToken);
@@ -134,8 +130,7 @@ public class SalesForceService {
 
     public String getStartDate(HttpServletRequest request, HttpClient client) throws IOException, JSONException, URISyntaxException {
         JSONObject authResponse = queryForAuthResponse(request, client);
-        setAccessTokenAndInstanceURL(authResponse, request, client);
+        setAccessTokenAndInstanceURL(authResponse, request);
         return queryThoughtWorksStartDate(client, request.getSession());
     }
 }
-
