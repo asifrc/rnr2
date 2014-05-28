@@ -40,6 +40,5 @@ public class SAMLController {
         catch (IOException | UnmarshallingException | ValidationException | ParserConfigurationException | SAXException | SecurityPolicyException | CertificateException e) {
             return "sorry";
         }
-        return "sorry";
     }
 }
