@@ -16,42 +16,66 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class SAMLControllerTest {
-    @Mock private HttpServletRequest httpServletRequest;
-    @Mock private SAMLService samlService;
-    @Mock
-    private SalesForceService salesForceService;
-    @Mock
-    HttpServletResponse httpServletResponse;
+    @Mock HttpServletRequest mockRequest;
+    @Mock HttpServletResponse mockResponse;
+    @Mock SAMLService mockSamlService;
+    @Mock SalesForceService mockSalesForceService;
 
     private SAMLController samlController;
-    private String samlResponse = "SAMLResponse";
-    private String userEmail;
-    private String userId;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        samlController = new SAMLController(samlService, salesForceService);
+        samlController = new SAMLController(mockSamlService, mockSalesForceService);
     }
 
     @Test
     public void shouldGetSAMLResponseStringFromHTTPRequest() throws SAXException, ParserConfigurationException, IOException, ValidationException, CertificateException, UnmarshallingException, SecurityPolicyException {
-        samlController.handleOKTACallback(httpServletRequest, httpServletResponse);
+        samlController.handleOKTACallback(mockRequest, mockResponse);
 
-        verify(httpServletRequest).getParameter(samlResponse);
+        verify(mockRequest).getParameter("SAMLResponse");
     }
 
     @Test
     public void shouldSetSession() throws SAXException, ParserConfigurationException, IOException, ValidationException, CertificateException, UnmarshallingException, SecurityPolicyException {
-        when(httpServletRequest.getParameter(samlResponse)).thenReturn("some response");
-        samlController.handleOKTACallback(httpServletRequest, httpServletResponse);
+        when(mockRequest.getParameter("SAMLResponse")).thenReturn("some response");
+        samlController.handleOKTACallback(mockRequest, mockResponse);
 
-        verify(samlService).setSessionWhenSAMLResponseIsValid(httpServletRequest, "some response");
+        verify(mockSamlService).setSessionWhenSAMLResponseIsValid(mockRequest, "some response");
     }
 
+    @Test
+    public void shouldSetUserEmailOnSalesForceService() throws CertificateException, UnmarshallingException, IOException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
+        String userEmail = "Some email";
+        when(mockRequest.getParameter("SAMLResponse")).thenReturn("some response");
+        when(mockSamlService.getUserIdFromSAMLString("some response")).thenReturn(userEmail);
+
+        samlController.handleOKTACallback(mockRequest, mockResponse);
+
+        verify(mockSamlService).getUserIdFromSAMLString("some response");
+        verify(mockSalesForceService).setUserEmail(userEmail);
+    }
+
+    @Test
+    public void shouldAuthenticateWithSalesForce() throws IOException {
+        samlController.handleOKTACallback(mockRequest, mockResponse);
+
+        verify(mockSalesForceService).authenticateWithSalesForce(mockRequest, mockResponse);
+    }
+
+    @Test
+    public void shouldReturnSorryViewWhenExceptionIsThrown() throws CertificateException, UnmarshallingException, IOException, ValidationException, SAXException, ParserConfigurationException, SecurityPolicyException {
+        when(mockRequest.getParameter("SAMLResponse")).thenReturn("some response");
+        doThrow(new SecurityPolicyException()).when(mockSamlService).setSessionWhenSAMLResponseIsValid(mockRequest, "some response");
+
+        String actual = samlController.handleOKTACallback(mockRequest,mockResponse);
+
+        assertThat(actual, is("sorry"));
+    }
 }

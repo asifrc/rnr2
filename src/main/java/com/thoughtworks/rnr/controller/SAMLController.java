@@ -34,6 +34,7 @@ public class SAMLController {
         try {
             String samlResponse = request.getParameter("SAMLResponse");
             samlService.setSessionWhenSAMLResponseIsValid(request, samlResponse);
+            salesForceService.setUserEmail(samlService.getUserIdFromSAMLString(samlResponse));
             salesForceService.authenticateWithSalesForce(request, response);
             return null;
         }
