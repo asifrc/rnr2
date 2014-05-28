@@ -31,9 +31,6 @@
     <bean id="timeProvider" class="${timeProvider}">
     </bean>
 
-    <bean id="jsonObjectFactory" class="com.thoughtworks.rnr.factory.JSONObjectFactory">
-    </bean>
-
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
