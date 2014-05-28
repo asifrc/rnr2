@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -65,20 +64,20 @@ public class SalesForceService {
     }
 
     private JSONObject requestAuthResponseFromSalesForce(HttpServletRequest request, HttpClient httpClient) throws IOException, JSONException {
-        PostMethod httpPost = buildHttpPost(request);
-        httpClient.executeMethod(httpPost);
-        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(httpPost.getResponseBodyAsStream())));
+        PostMethod postMethod = buildHttpPostMethod(request);
+        httpClient.executeMethod(postMethod);
+        JSONObject authResponse = new JSONObject(new JSONTokener(new InputStreamReader(postMethod.getResponseBodyAsStream())));
         return authResponse;
     }
 
-    private PostMethod buildHttpPost(HttpServletRequest request) {
-        PostMethod httpPost = new PostMethod(TOKEN_URL);
-        httpPost.addParameter("code", request.getParameter("code"));
-        httpPost.addParameter("grant_type", "authorization_code");
-        httpPost.addParameter("client_id", CLIENT_ID);
-        httpPost.addParameter("client_secret", CLIENT_SECRET);
-        httpPost.addParameter("redirect_uri", REDIRECT_URI);
-        return httpPost;
+    private PostMethod buildHttpPostMethod(HttpServletRequest request) {
+        PostMethod postMethod = new PostMethod(TOKEN_URL);
+        postMethod.addParameter("code", request.getParameter("code"));
+        postMethod.addParameter("grant_type", "authorization_code");
+        postMethod.addParameter("client_id", CLIENT_ID);
+        postMethod.addParameter("client_secret", CLIENT_SECRET);
+        postMethod.addParameter("redirect_uri", REDIRECT_URI);
+        return postMethod;
     }
 
     private void setAccessTokenAndInstanceURLInSession(JSONObject authResponse, HttpServletRequest request) throws JSONException {
@@ -89,26 +88,26 @@ public class SalesForceService {
     }
 
     private String queryThoughtWorksStartDate(HttpClient httpClient, HttpSession session) throws URISyntaxException, IOException, JSONException {
-        GetMethod httpGet = setupHttpGetMethod(session);
+        GetMethod getMethod = setupHttpGetMethod(session);
 
-        httpClient.executeMethod(httpGet);
+        httpClient.executeMethod(getMethod);
 
-        JSONObject jsonObject = parseHttpResponseIntoJSON(httpGet);
+        JSONObject jsonObject = parseHttpResponseIntoJSON(getMethod);
         String startDate = getStartDateFromJSON(jsonObject);
         return formatDate(startDate);
     }
 
     private GetMethod setupHttpGetMethod(HttpSession session) {
-        GetMethod httpGet = new GetMethod((String) session.getAttribute(INSTANCE_URL) + "/services/data/v29.0/query");
+        GetMethod getMethod = new GetMethod((String) session.getAttribute(INSTANCE_URL) + "/services/data/v29.0/query");
         String accessToken = (String) session.getAttribute(ACCESS_TOKEN);
-        httpGet.setRequestHeader("Authorization", "OAuth " + accessToken);
+        getMethod.setRequestHeader("Authorization", "OAuth " + accessToken);
         NameValuePair[] params = createQueryString();
-        httpGet.setQueryString(params);
-        return httpGet;
+        getMethod.setQueryString(params);
+        return getMethod;
     }
 
-    private JSONObject parseHttpResponseIntoJSON(GetMethod httpGet) throws JSONException, IOException {
-        return new JSONObject(new JSONTokener(new InputStreamReader(httpGet.getResponseBodyAsStream())));
+    private JSONObject parseHttpResponseIntoJSON(GetMethod getMethod) throws JSONException, IOException {
+        return new JSONObject(new JSONTokener(new InputStreamReader(getMethod.getResponseBodyAsStream())));
     }
 
     private NameValuePair[] createQueryString() {
